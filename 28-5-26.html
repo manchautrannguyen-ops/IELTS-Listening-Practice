@@ -1,0 +1,645 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Vocabulary Quiz · Listening 28-5</title>
+<template id="__bundler_thumbnail" data-bg-color="#f6f1e7">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="800" fill="#f6f1e7"/>
+    <rect x="240" y="200" width="720" height="400" rx="36" fill="#fbf7ee" stroke="#e3dccb" stroke-width="3"/>
+    <text x="600" y="430" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="92" font-weight="700" fill="#1f5d4c" letter-spacing="-1">Aa</text>
+    <rect x="320" y="500" width="200" height="32" rx="16" fill="#e8efe9"/>
+    <rect x="540" y="500" width="200" height="32" rx="16" fill="#fff" stroke="#e3dccb" stroke-width="2"/>
+    <rect x="760" y="500" width="120" height="32" rx="16" fill="#fff" stroke="#e3dccb" stroke-width="2"/>
+  </svg>
+</template>
+<style>
+  :root {
+    --bg: #f6f1e7;
+    --bg-soft: #fbf7ee;
+    --ink: #1f2a26;
+    --ink-soft: #5a655f;
+    --line: #e3dccb;
+    --accent: #1f5d4c;
+    --accent-soft: #e8efe9;
+    --wrong: #b04646;
+    --right: #2f7a52;
+    --shadow: 0 1px 0 #00000008, 0 12px 40px -20px #1f2a2630;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.45;
+  }
+  .shell {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 32px 24px 80px;
+  }
+  header.top {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .brand {
+    font-size: 13px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    font-weight: 600;
+  }
+  .counter {
+    font-variant-numeric: tabular-nums;
+    font-size: 13px;
+    color: var(--ink-soft);
+    letter-spacing: 0.06em;
+  }
+  .progress {
+    height: 4px;
+    background: var(--line);
+    border-radius: 99px;
+    overflow: hidden;
+    margin-bottom: 32px;
+  }
+  .progress > div {
+    height: 100%;
+    background: var(--accent);
+    width: 0%;
+    transition: width 320ms cubic-bezier(.2,.7,.2,1);
+  }
+
+  .card {
+    background: var(--bg-soft);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 36px 32px 28px;
+    box-shadow: var(--shadow);
+  }
+  .prompt-label {
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin: 0 0 14px;
+    font-weight: 600;
+  }
+  .word {
+    font-size: clamp(40px, 7vw, 56px);
+    line-height: 1.1;
+    margin: 0 0 8px;
+    letter-spacing: -0.015em;
+    font-weight: 600;
+  }
+  .helper {
+    font-size: 14px;
+    color: var(--ink-soft);
+    margin: 0 0 28px;
+  }
+  .options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  @media (max-width: 620px) {
+    .options { grid-template-columns: 1fr; }
+  }
+  .opt {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    text-align: left;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 10px 12px;
+    font: inherit;
+    color: var(--ink);
+    font-size: 14.5px;
+    line-height: 1.3;
+    cursor: pointer;
+    transition: border-color 120ms, background 120ms, transform 120ms;
+  }
+  .opt:hover { border-color: #c9c0a8; background: #fffdf6; }
+  .opt:active { transform: scale(0.995); }
+  .opt .bullet {
+    min-width: 26px; height: 22px; flex: none;
+    border-radius: 99px;
+    border: 1.5px solid var(--line);
+    display: grid; place-items: center;
+    font-size: 10.5px; color: var(--ink-soft);
+    letter-spacing: 0;
+    font-weight: 600;
+    background: #fff;
+    font-variant-numeric: tabular-nums;
+    padding: 0 6px;
+  }
+  .opt.selected { border-color: var(--accent); background: var(--accent-soft); }
+  .opt.selected .bullet {
+    background: var(--accent); color: #fff; border-color: var(--accent);
+  }
+  .opt.selected .bullet::before { content: "✓"; font-size: 13px; }
+  .opt.selected .bullet > span { display: none; }
+
+  .actions {
+    margin-top: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .hint {
+    font-size: 13px;
+    color: var(--ink-soft);
+  }
+  .btn {
+    appearance: none;
+    border: 0;
+    background: var(--accent);
+    color: #fff;
+    font: inherit;
+    font-weight: 600;
+    padding: 12px 22px;
+    border-radius: 99px;
+    cursor: pointer;
+    letter-spacing: 0.02em;
+    transition: background 120ms, transform 120ms, opacity 120ms;
+  }
+  .btn:hover { background: #18493b; }
+  .btn:active { transform: scale(0.98); }
+  .btn[disabled] { background: #b9bdb4; cursor: not-allowed; }
+  .btn.ghost {
+    background: transparent;
+    color: var(--ink);
+    border: 1px solid var(--line);
+  }
+  .btn.ghost:hover { background: #fff; }
+
+  /* Results */
+  .results .summary {
+    display: flex;
+    align-items: baseline;
+    gap: 18px;
+    margin-bottom: 8px;
+  }
+  .score {
+    font-size: clamp(56px, 9vw, 80px);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  .score .of { color: var(--ink-soft); font-weight: 400; }
+  .summary-sub { color: var(--ink-soft); font-size: 15px; }
+  .legend {
+    display: flex; gap: 18px; align-items: center;
+    margin: 22px 0 14px;
+    font-size: 13px; color: var(--ink-soft);
+  }
+  .pill {
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .dot { width: 10px; height: 10px; border-radius: 99px; display: inline-block; }
+  .dot.r { background: var(--right); }
+  .dot.w { background: var(--wrong); }
+  .review-list {
+    list-style: none;
+    margin: 0; padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 8px;
+  }
+  .review-list li {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 14px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: #fff;
+    font-size: 15px;
+  }
+  .mark {
+    width: 22px; height: 22px; flex: none;
+    border-radius: 99px;
+    display: grid; place-items: center;
+    color: #fff; font-size: 12px; font-weight: 700;
+  }
+  .mark.r { background: var(--right); }
+  .mark.w { background: var(--wrong); }
+  .review-list li .w-text { font-weight: 500; }
+  .footer-actions { margin-top: 28px; display: flex; gap: 12px; }
+
+  .hidden { display: none !important; }
+
+  /* Start form */
+  .field { margin-bottom: 18px; }
+  .field label {
+    display: block;
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .field input {
+    width: 100%;
+    font: inherit;
+    font-size: 16px;
+    color: var(--ink);
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px 14px;
+    transition: border-color 120ms, box-shadow 120ms;
+  }
+  .field input:focus {
+    outline: 0;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+  }
+  .field .err {
+    display: none;
+    color: var(--wrong);
+    font-size: 13px;
+    margin-top: 6px;
+  }
+  .field.invalid .err { display: block; }
+  .field.invalid input { border-color: var(--wrong); }
+
+  /* Submission status */
+  .submit-status {
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin-top: 12px;
+  }
+  .submit-status.ok { color: var(--right); }
+  .submit-status.err { color: var(--wrong); }
+
+  @media (max-width: 540px) {
+    .card { padding: 28px 22px 22px; }
+    .actions { flex-direction: column-reverse; align-items: stretch; }
+    .actions .btn { width: 100%; }
+    .hint { text-align: center; }
+  }
+</style>
+</head>
+<body>
+  <div class="shell">
+    <header class="top">
+      <div class="brand">Listening 28 · 5 — Vocabulary</div>
+      <div class="counter" id="counter"></div>
+    </header>
+    <div class="progress hidden" id="progressWrap"><div id="bar"></div></div>
+
+    <!-- Start view -->
+    <section id="start" class="card">
+      <p class="prompt-label">Thông tin học sinh</p>
+      <h1 class="word" style="font-size:clamp(28px,4.5vw,36px);margin-bottom:8px;">Trước khi bắt đầu</h1>
+      <p class="helper">Vui lòng nhập <strong>họ tên</strong> và <strong>lớp</strong> để bắt đầu bài kiểm tra.</p>
+      <div class="field" id="fieldName">
+        <label for="studentName">Họ và tên</label>
+        <input id="studentName" type="text" autocomplete="name" placeholder="Ví dụ: Nguyễn Văn A" />
+        <div class="err">Vui lòng nhập họ tên.</div>
+      </div>
+      <div class="field" id="fieldClass">
+        <label for="studentClass">Lớp</label>
+        <input id="studentClass" type="text" autocomplete="off" placeholder="Ví dụ: 9A1" />
+        <div class="err">Vui lòng nhập lớp.</div>
+      </div>
+      <div class="actions">
+        <span class="hint">Cả hai ô đều bắt buộc</span>
+        <button class="btn" id="startBtn">Bắt đầu →</button>
+      </div>
+    </section>
+
+    <!-- Quiz view -->
+    <section id="quiz" class="card hidden">
+      <p class="prompt-label">Chọn nghĩa đúng</p>
+      <h1 class="word" id="word"></h1>
+      <p class="helper">Chọn nghĩa đúng từ danh sách bên dưới, sau đó nhấn <strong>Tiếp theo</strong>.</p>
+      <div class="options" id="options" role="radiogroup" aria-label="Đáp án"></div>
+      <div class="actions">
+        <span class="hint" id="hint">Chưa chọn đáp án</span>
+        <button class="btn" id="nextBtn" disabled>Tiếp theo →</button>
+      </div>
+    </section>
+
+    <!-- Results view -->
+    <section id="results" class="card results hidden">
+      <p class="prompt-label">Kết quả</p>
+      <div class="summary">
+        <div class="score"><span id="rightCount">0</span><span class="of"> / <span id="totalCount">0</span></span></div>
+        <div class="summary-sub" id="summarySub"></div>
+      </div>
+      <div class="legend">
+        <span class="pill"><span class="dot r"></span>Đúng</span>
+        <span class="pill"><span class="dot w"></span>Sai</span>
+        <span style="margin-left:auto">Đáp án chính xác không được hiển thị.</span>
+      </div>
+      <ul class="review-list" id="reviewList"></ul>
+      <div class="submit-status" id="submitStatus">Đang gửi kết quả…</div>
+      <div class="footer-actions">
+        <button class="btn" id="restartBtn">Làm lại</button>
+      </div>
+    </section>
+  </div>
+
+  <!-- Hidden iframe target for Google Form POST (no CORS, no navigation) -->
+  <iframe name="gform_target" style="display:none" aria-hidden="true"></iframe>
+
+<script>
+  // Vocabulary — verbatim from source document
+  const VOCAB = [
+    ["fascinating", "hấp dẫn, thú vị"],
+    ["bonfire", "lửa trại"],
+    ["residence", "nơi cư trú"],
+    ["sedentary", "ít vận động"],
+    ["creature", "sinh vật"],
+    ["keep an eye out", "chú ý tìm kiếm"],
+    ["spot", "nhìn thấy"],
+    ["branch", "cành cây"],
+    ["generally", "nhìn chung"],
+    ["posture", "tư thế"],
+    ["interpret", "hiểu, diễn giải"],
+    ["bend", "cúi xuống"],
+    ["aggression", "sự hung hăng"],
+    ["physical contact", "tiếp xúc cơ thể"],
+    ["pouch", "túi bụng"],
+    ["refrain", "kiềm chế, tránh"],
+    ["urge", "sự thôi thúc"],
+    ["greedy", "tham ăn"],
+    ["temporarily", "tạm thời"],
+    ["fence", "hàng rào"],
+    ["maintenance", "bảo trì"],
+    ["brief", "ngắn gọn"],
+    ["arena", "đấu trường, sân biểu diễn"],
+    ["hall", "hội trường"],
+    ["botanic", "thuộc thực vật học"],
+    ["fantastic", "tuyệt vời"],
+    ["site", "địa điểm"],
+    ["permit", "cho phép"],
+    ["designate", "chỉ định"],
+    ["enclosure", "khu nuôi nhốt"],
+  ];
+
+  // Shuffle helper
+  function shuffled(arr) {
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  // Build a question: word + the full list of meanings (shuffled once globally).
+  const ALL_MEANINGS = VOCAB.map(p => p[1]);
+  const SHUFFLED_MEANINGS = shuffled(ALL_MEANINGS);
+
+  function buildQuestion(index) {
+    const [word, correct] = VOCAB[index];
+    return { word, correct, choices: SHUFFLED_MEANINGS };
+  }
+
+  // State — keep words in original order.
+  let questions = VOCAB.map((_, i) => buildQuestion(i));
+  let current = 0;
+  let answers = new Array(questions.length).fill(null);
+
+  // DOM
+  const $word = document.getElementById("word");
+  const $opts = document.getElementById("options");
+  const $next = document.getElementById("nextBtn");
+  const $counter = document.getElementById("counter");
+  const $bar = document.getElementById("bar");
+  const $progressWrap = document.getElementById("progressWrap");
+  const $hint = document.getElementById("hint");
+  const $quiz = document.getElementById("quiz");
+  const $results = document.getElementById("results");
+  const $start = document.getElementById("start");
+  const $startBtn = document.getElementById("startBtn");
+  const $studentName = document.getElementById("studentName");
+  const $studentClass = document.getElementById("studentClass");
+  const $fieldName = document.getElementById("fieldName");
+  const $fieldClass = document.getElementById("fieldClass");
+  const $submitStatus = document.getElementById("submitStatus");
+
+  // Google Form configuration
+  const GFORM_ID = "1FAIpQLSc9JsLBdpMfeSLjCpDL1AUClZ9Br6FjjwxZKbp39DcMTj5HtA";
+  const GFORM_ACTION = `https://docs.google.com/forms/d/e/${GFORM_ID}/formResponse`;
+  const GFORM_FIELDS = {
+    name:    "entry.932848095",
+    klass:   "entry.598029950",
+    answers: "entry.1536985150",
+    score:   "entry.1378933691",
+  };
+
+  // Student info (collected on start screen)
+  let student = { name: "", klass: "" };
+
+  function render() {
+    const q = questions[current];
+    $counter.textContent = `Từ ${current + 1} / ${questions.length}`;
+    $bar.style.width = `${(current / questions.length) * 100}%`;
+    $word.textContent = q.word;
+    $opts.innerHTML = "";
+    q.choices.forEach((choice, i) => {
+      const btn = document.createElement("button");
+      btn.className = "opt";
+      btn.type = "button";
+      btn.setAttribute("role", "radio");
+      btn.setAttribute("aria-checked", answers[current] === choice ? "true" : "false");
+      if (answers[current] === choice) btn.classList.add("selected");
+      btn.innerHTML = `<span class="bullet"><span>${i + 1}</span></span><span class="text"></span>`;
+      btn.querySelector(".text").textContent = choice;
+      btn.addEventListener("click", () => {
+        answers[current] = choice;
+        render();
+      });
+      $opts.appendChild(btn);
+    });
+    const isLast = current === questions.length - 1;
+    $next.textContent = isLast ? "Xem kết quả" : "Tiếp theo →";
+    if (answers[current] == null) {
+      $next.disabled = true;
+      $hint.textContent = "Chưa chọn đáp án";
+    } else {
+      $next.disabled = false;
+      $hint.textContent = "Sẵn sàng";
+    }
+  }
+
+  // --- Start screen: validate name + class, then begin quiz ---
+  function validateStart() {
+    const nameOk = $studentName.value.trim().length > 0;
+    const classOk = $studentClass.value.trim().length > 0;
+    $fieldName.classList.toggle("invalid", !nameOk);
+    $fieldClass.classList.toggle("invalid", !classOk);
+    return nameOk && classOk;
+  }
+  // Clear "invalid" highlight as the user types
+  $studentName.addEventListener("input", () => $fieldName.classList.remove("invalid"));
+  $studentClass.addEventListener("input", () => $fieldClass.classList.remove("invalid"));
+  // Enter key on either input triggers start
+  [$studentName, $studentClass].forEach(el =>
+    el.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); $startBtn.click(); } })
+  );
+  $startBtn.addEventListener("click", () => {
+    if (!validateStart()) {
+      // Focus the first empty field for convenience
+      if (!$studentName.value.trim()) $studentName.focus();
+      else $studentClass.focus();
+      return;
+    }
+    student.name = $studentName.value.trim();
+    student.klass = $studentClass.value.trim();
+    $start.classList.add("hidden");
+    $quiz.classList.remove("hidden");
+    $progressWrap.classList.remove("hidden");
+    render();
+  });
+
+  $next.addEventListener("click", () => {
+    if (answers[current] == null) return;
+    if (current < questions.length - 1) {
+      current += 1;
+      render();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } else {
+      showResults();
+    }
+  });
+
+  function showResults() {
+    $quiz.classList.add("hidden");
+    $results.classList.remove("hidden");
+    $bar.style.width = "100%";
+    $counter.textContent = `Hoàn thành`;
+
+    const total = questions.length;
+    let right = 0;
+    const list = document.getElementById("reviewList");
+    list.innerHTML = "";
+    // Build the per-question record for both the on-page review and the form payload.
+    const answerLines = [];
+    questions.forEach((q, i) => {
+      const ok = answers[i] === q.correct;
+      if (ok) right += 1;
+      const li = document.createElement("li");
+      li.innerHTML = `<span class="mark ${ok ? "r" : "w"}">${ok ? "✓" : "✗"}</span><span class="w-text"></span>`;
+      li.querySelector(".w-text").textContent = q.word;
+      list.appendChild(li);
+      // Plain-text line for the Google Form "Answers" field.
+      const chosen = answers[i] == null ? "(không chọn)" : answers[i];
+      answerLines.push(`${ok ? "✓" : "✗"} ${q.word} → ${chosen}`);
+    });
+    document.getElementById("rightCount").textContent = right;
+    document.getElementById("totalCount").textContent = total;
+    const pct = Math.round((right / total) * 100);
+    let msg;
+    if (pct === 100) msg = "Hoàn hảo — bạn nhớ hết từ vựng!";
+    else if (pct >= 80) msg = "Rất tốt — chỉ cần ôn lại vài từ.";
+    else if (pct >= 60) msg = "Khá ổn — hãy xem lại các từ còn nhầm.";
+    else if (pct >= 40) msg = "Cần luyện tập thêm — thử lại nhé.";
+    else msg = "Đừng nản — học lại và làm lại bài này.";
+    document.getElementById("summarySub").textContent = `${pct}% đúng. ${msg}`;
+
+    // Submit to Google Form (fire-and-forget via hidden iframe; no CORS issues).
+    submitToGoogleForm({
+      name: student.name,
+      klass: student.klass,
+      answers: answerLines.join("\n"),
+      score: `${right}/${total}`,
+    });
+  }
+
+  function submitToGoogleForm(payload) {
+    $submitStatus.className = "submit-status";
+    $submitStatus.textContent = "Đang gửi kết quả…";
+    try {
+      // Build a transient form element that posts into the hidden iframe.
+      const form = document.createElement("form");
+      form.action = GFORM_ACTION;
+      form.method = "POST";
+      form.target = "gform_target";
+      form.style.display = "none";
+      const add = (name, value) => {
+        const inp = document.createElement("input");
+        inp.type = "hidden";
+        inp.name = name;
+        inp.value = value;
+        form.appendChild(inp);
+      };
+      add(GFORM_FIELDS.name,    payload.name);
+      add(GFORM_FIELDS.klass,   payload.klass);
+      add(GFORM_FIELDS.answers, payload.answers);
+      add(GFORM_FIELDS.score,   payload.score);
+      document.body.appendChild(form);
+
+      // Google Forms returns an opaque cross-origin response; "load" on the iframe
+      // is the only signal we get back. Treat it as success.
+      const iframe = document.querySelector('iframe[name="gform_target"]');
+      const onLoad = () => {
+        $submitStatus.className = "submit-status ok";
+        $submitStatus.textContent = `Đã gửi kết quả của ${payload.name} (${payload.klass}) — ${payload.score}.`;
+        iframe.removeEventListener("load", onLoad);
+      };
+      iframe.addEventListener("load", onLoad);
+
+      form.submit();
+      // Remove the throwaway form on the next tick.
+      setTimeout(() => form.remove(), 0);
+
+      // Safety: if the iframe never fires "load" within 8s, show a fallback message.
+      setTimeout(() => {
+        if ($submitStatus.classList.contains("ok") || $submitStatus.classList.contains("err")) return;
+        $submitStatus.className = "submit-status err";
+        $submitStatus.textContent = "Không xác nhận được phản hồi — hãy báo giáo viên nếu kết quả không được ghi nhận.";
+      }, 8000);
+    } catch (err) {
+      $submitStatus.className = "submit-status err";
+      $submitStatus.textContent = "Lỗi khi gửi kết quả. Vui lòng báo giáo viên.";
+      console.error("Form submit error:", err);
+    }
+  }
+
+  document.getElementById("restartBtn").addEventListener("click", () => {
+    // Re-shuffle the meanings list, but keep the word order fixed.
+    const newShuffled = shuffled(ALL_MEANINGS);
+    questions = VOCAB.map(([w, c]) => ({ word: w, correct: c, choices: newShuffled }));
+    current = 0;
+    answers = new Array(questions.length).fill(null);
+    // Send the user back to the start screen so name/class can be confirmed or changed.
+    $results.classList.add("hidden");
+    $quiz.classList.add("hidden");
+    $progressWrap.classList.add("hidden");
+    $start.classList.remove("hidden");
+    $bar.style.width = "0%";
+    $counter.textContent = "";
+    // Preserve the previously entered info as defaults; user can edit if needed.
+    $studentName.value = student.name;
+    $studentClass.value = student.klass;
+    $studentName.focus();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+
+  // Keyboard: Enter to advance once an option has been chosen.
+  window.addEventListener("keydown", (e) => {
+    if (!$results.classList.contains("hidden")) return;
+    if (!$quiz.classList.contains("hidden") && e.key === "Enter") {
+      if (!$next.disabled) $next.click();
+    }
+  });
+
+  // Focus the name field on initial load.
+  $studentName.focus();
+</script>
+</body>
+</html>
