@@ -1,0 +1,772 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Listening — Cam 21 Test 1, Part 1 · Oyster Bay Sailing Club</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #fbf7ee;
+    --paper-2: #f3ecdc;
+    --ink: #1a1a1a;
+    --ink-soft: #4a4a4a;
+    --rule: #d9cfb8;
+    --rule-soft: #ebe2cc;
+    --accent: #1f3b6b;
+    --accent-soft: #e3eaf6;
+    --highlight: #ffe78a;
+    --highlight-deep: #f5c43c;
+    --good: #1f6a3a;
+    --good-bg: #dff0e0;
+    --bad: #a8203b;
+    --bad-bg: #f7dde2;
+    --shadow: 0 1px 0 rgba(20,20,20,.05), 0 12px 32px -18px rgba(20,20,20,.25);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Source Serif 4", Cambria, Georgia, serif;
+    font-size: 17px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  body::before {
+    content:"";
+    position: fixed; inset: 0;
+    pointer-events: none;
+    background-image:
+      radial-gradient(rgba(60,40,10,.035) 1px, transparent 1px),
+      radial-gradient(rgba(60,40,10,.025) 1px, transparent 1px);
+    background-size: 3px 3px, 7px 7px;
+    background-position: 0 0, 1px 2px;
+    z-index: 0;
+  }
+
+  /* === Top bar === */
+  .topbar {
+    position: sticky; top: 0; z-index: 30;
+    background: rgba(251,247,238,.92);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--rule);
+  }
+  .topbar-inner {
+    max-width: 1000px; margin: 0 auto;
+    padding: 14px 28px;
+    display: flex; align-items: center; gap: 16px;
+    font-family: Inter, system-ui, sans-serif;
+  }
+  .brand { display: flex; flex-direction: column; line-height: 1.15; min-width: 0; }
+  .brand .eyebrow {
+    font-size: 10.5px; letter-spacing: .18em; text-transform: uppercase;
+    color: var(--ink-soft); font-weight: 600;
+  }
+  .brand .title {
+    font-family: "Source Serif 4", serif;
+    font-size: 18px; font-weight: 600;
+    color: var(--ink);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .spacer { flex: 1; }
+  .timer {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 14px;
+    background: #fff;
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+  }
+  .timer .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 0 4px var(--accent-soft);
+  }
+  .timer.warn .dot { background: #c47a14; box-shadow: 0 0 0 4px #fbe7c4; }
+  .timer.danger .dot { background: var(--bad); box-shadow: 0 0 0 4px var(--bad-bg); animation: pulse 1s infinite; }
+  @keyframes pulse { 50% { box-shadow: 0 0 0 8px var(--bad-bg); } }
+  .timer-num {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-variant-numeric: tabular-nums;
+    font-size: 18px; font-weight: 500;
+    color: var(--ink);
+    letter-spacing: .02em;
+  }
+  .timer-label {
+    font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--ink-soft);
+    border-left: 1px solid var(--rule);
+    padding-left: 10px;
+  }
+  .tool-toggle, .submit-btn {
+    font-family: Inter, system-ui, sans-serif;
+    font-size: 13px; font-weight: 600;
+    border-radius: 10px;
+    padding: 9px 14px;
+    cursor: pointer;
+    transition: transform .08s ease, background .15s ease, border-color .15s ease;
+    display: inline-flex; align-items: center; gap: 8px;
+    white-space: nowrap;
+  }
+  .tool-toggle { background: #fff; border: 1px solid var(--rule); color: var(--ink); }
+  .tool-toggle:hover { border-color: #b8a878; }
+  .tool-toggle.active {
+    background: var(--highlight);
+    border-color: var(--highlight-deep);
+    color: #4a3a00;
+  }
+  .tool-toggle .swatch {
+    width: 12px; height: 12px; border-radius: 3px;
+    background: var(--highlight);
+    border: 1px solid var(--highlight-deep);
+  }
+  .tool-toggle.active .swatch { background: #fff; }
+  .submit-btn { background: var(--accent); color: #fff; border: 1px solid var(--accent); }
+  .submit-btn:hover { background: #18305b; }
+  .submit-btn:active { transform: translateY(1px); }
+  .submit-btn[disabled] { background: #a8a8a8; border-color: #a8a8a8; cursor: not-allowed; }
+
+  /* === Page === */
+  main {
+    position: relative; z-index: 1;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 36px 56px 120px;
+  }
+  @media (max-width: 760px) {
+    main { padding: 28px 18px 100px; }
+    .topbar-inner { padding: 12px 16px; flex-wrap: wrap; gap: 10px; }
+    .timer-label { display: none; }
+    .brand .title { white-space: normal; }
+  }
+
+  .doc-head { margin: 8px 0 28px; }
+  .doc-head .kicker {
+    font-family: Inter, sans-serif;
+    font-size: 11px; letter-spacing: .22em; text-transform: uppercase;
+    color: var(--accent); font-weight: 600;
+  }
+  .doc-head h1 {
+    font-family: "Source Serif 4", serif;
+    font-size: 36px; font-weight: 600;
+    margin: 6px 0 4px;
+    letter-spacing: -.01em;
+  }
+  .doc-head .sub { color: var(--ink-soft); font-style: italic; font-size: 16px; }
+
+  /* Audio card */
+  .audio-card {
+    background: #fff;
+    border: 1px solid var(--rule);
+    border-radius: 14px;
+    padding: 18px 20px;
+    margin: 24px 0 14px;
+    box-shadow: var(--shadow);
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 18px;
+    align-items: center;
+  }
+  .audio-icon {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    display: grid; place-items: center;
+    flex-shrink: 0;
+  }
+  .audio-icon svg { width: 26px; height: 26px; }
+  .audio-meta { font-family: Inter, sans-serif; display: flex; flex-direction: column; gap: 4px; }
+  .audio-meta .label {
+    font-size: 10.5px; letter-spacing: .18em; text-transform: uppercase;
+    color: var(--ink-soft); font-weight: 600;
+  }
+  .audio-meta .name { font-family: "Source Serif 4", serif; font-size: 17px; font-weight: 600; }
+  .audio-meta .hint { font-size: 12.5px; color: var(--ink-soft); }
+  .audio-frame-wrap {
+    grid-column: 1 / -1;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #f4eedf;
+    border: 1px solid var(--rule-soft);
+  }
+  .audio-frame-wrap iframe { display: block; width: 100%; height: 76px; border: 0; }
+  .audio-sticky { position: sticky; top: 70px; z-index: 20; margin-bottom: 34px; }
+
+  /* Section heading */
+  .qblock { margin: 0 0 42px; }
+  .qhead {
+    display: flex; align-items: baseline; gap: 14px;
+    margin-bottom: 6px;
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 6px;
+  }
+  .qhead .qrange {
+    font-family: Inter, sans-serif;
+    font-size: 12px; letter-spacing: .18em; text-transform: uppercase;
+    color: var(--accent); font-weight: 700;
+  }
+  .qhead .qcount {
+    font-family: Inter, sans-serif;
+    font-size: 11.5px; color: var(--ink-soft);
+    margin-left: auto;
+  }
+  .instruction { font-style: italic; color: var(--ink-soft); margin: 8px 0 4px; }
+  .topic {
+    font-family: "Source Serif 4", serif;
+    font-size: 21px; font-weight: 600;
+    margin: 14px 0 16px;
+    text-align: center;
+    letter-spacing: -.005em;
+  }
+
+  /* === Completion table === */
+  .table-scroll {
+    overflow-x: auto;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--rule);
+    background: #fff;
+  }
+  table.completion {
+    border-collapse: collapse;
+    width: 100%;
+    min-width: 760px;
+  }
+  table.completion thead th {
+    font-family: Inter, sans-serif;
+    font-size: 12px; letter-spacing: .08em; text-transform: uppercase;
+    font-weight: 700; color: #fff;
+    background: var(--accent);
+    text-align: left;
+    padding: 13px 18px;
+    border-right: 1px solid rgba(255,255,255,.18);
+  }
+  table.completion thead th:last-child { border-right: 0; }
+  table.completion tbody td {
+    vertical-align: top;
+    padding: 16px 18px;
+    border-top: 1px solid var(--rule);
+    border-right: 1px dotted var(--rule-soft);
+    font-size: 16px;
+    line-height: 1.7;
+  }
+  table.completion tbody td:last-child { border-right: 0; }
+  table.completion tbody tr:nth-child(even) td { background: #fcfaf3; }
+  .course-name { font-weight: 600; }
+  .cell-list { margin: 0; padding: 0; list-style: none; }
+  .cell-list li { padding: 2px 0; }
+
+  /* === Notes card (Q7-10) === */
+  .notes-card {
+    background: #fff;
+    border: 1px solid var(--rule);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  .notes-card .notes-banner {
+    background: var(--accent);
+    color: #fff;
+    font-family: Inter, sans-serif; font-weight: 700;
+    letter-spacing: .04em; font-size: 14px;
+    padding: 12px 22px;
+  }
+  .notes-card ul { list-style: none; margin: 0; padding: 8px 0; }
+  .notes-card li {
+    padding: 11px 24px;
+    border-top: 1px solid var(--rule-soft);
+    line-height: 1.9;
+    position: relative;
+  }
+  .notes-card li:first-child { border-top: 0; }
+  .notes-card li.bullet { padding-left: 42px; }
+  .notes-card li.bullet::before {
+    content: "•"; color: var(--accent); font-weight: 700;
+    position: absolute; left: 24px; top: 11px;
+  }
+
+  /* Inline gap + input */
+  .gap { display: inline; white-space: nowrap; }
+  .qnum {
+    font-family: Inter, sans-serif;
+    font-size: 11px; font-weight: 700;
+    background: var(--accent); color: #fff;
+    border-radius: 4px; padding: 2px 6px; line-height: 1;
+    letter-spacing: .02em; margin-right: 4px; vertical-align: 1px;
+  }
+  .ti {
+    font-family: "Source Serif 4", serif;
+    font-size: 15.5px;
+    color: var(--ink);
+    background: #fff;
+    border: 1.5px solid var(--rule);
+    border-bottom: 2px solid var(--ink-soft);
+    border-radius: 6px;
+    width: 150px; height: 34px; padding: 0 10px;
+    outline: none; vertical-align: baseline;
+    transition: border-color .15s ease, background .15s ease;
+  }
+  .ti.narrow { width: 96px; }
+  .ti:focus { border-color: var(--accent); background: var(--accent-soft); }
+  .verdict {
+    display: none;
+    width: 20px; height: 20px; border-radius: 50%;
+    vertical-align: middle; margin-left: 5px;
+    font-family: Inter, sans-serif; font-weight: 700; font-size: 11px;
+    text-align: center; line-height: 20px;
+  }
+  body.submitted .verdict { display: inline-block; }
+  body.submitted .verdict.ok { background: var(--good-bg); color: var(--good); }
+  body.submitted .verdict.no { background: var(--bad-bg); color: var(--bad); }
+  body.submitted .ti { pointer-events: none; }
+  body.submitted .ti.ok { color: var(--good); border-color: var(--good); background: var(--good-bg); }
+  body.submitted .ti.no { color: var(--bad); border-color: var(--bad); background: var(--bad-bg); }
+
+  /* === Highlighter === */
+  .hl {
+    background: linear-gradient(transparent 25%, var(--highlight) 25%, var(--highlight) 90%, transparent 90%);
+    padding: 0 1px; border-radius: 1px; cursor: pointer;
+  }
+  .hl:hover {
+    background: linear-gradient(transparent 25%, var(--highlight-deep) 25%, var(--highlight-deep) 90%, transparent 90%);
+  }
+  body.hl-mode { cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'><path d='M3 21l3.5-1L20 7.5 16.5 4 3 17.5z' fill='%23ffe78a' stroke='%23a07a00' stroke-width='1.2' stroke-linejoin='round'/></svg>") 2 22, text; }
+  .hl-hint {
+    position: fixed; bottom: 28px; left: 28px;
+    background: var(--ink); color: #fff;
+    font-family: Inter, sans-serif; font-size: 12.5px;
+    padding: 10px 14px; border-radius: 9px;
+    box-shadow: 0 8px 28px -10px rgba(0,0,0,.5);
+    z-index: 40; display: none; align-items: center; gap: 10px; max-width: 360px;
+  }
+  .hl-hint.show { display: inline-flex; }
+  .hl-hint .swatch { width: 14px; height: 14px; border-radius: 3px; background: var(--highlight); flex-shrink: 0; }
+
+  /* === Results modal === */
+  .modal-back {
+    position: fixed; inset: 0;
+    background: rgba(20,20,20,.45);
+    backdrop-filter: blur(4px);
+    z-index: 50; display: none;
+    align-items: center; justify-content: center; padding: 24px;
+  }
+  .modal-back.show { display: flex; }
+  .modal {
+    background: var(--paper); border: 1px solid var(--rule);
+    border-radius: 16px; max-width: 480px; width: 100%;
+    padding: 32px; box-shadow: 0 30px 80px -20px rgba(0,0,0,.5);
+    font-family: "Source Serif 4", serif; text-align: center;
+  }
+  .modal .eyebrow {
+    font-family: Inter, sans-serif;
+    font-size: 11px; letter-spacing: .22em; text-transform: uppercase;
+    color: var(--accent); font-weight: 700;
+  }
+  .modal h2 { margin: 8px 0 6px; font-size: 26px; font-weight: 600; }
+  .modal .score {
+    margin: 18px 0 8px;
+    font-size: 64px; font-weight: 600; line-height: 1;
+    color: var(--accent); font-variant-numeric: tabular-nums;
+  }
+  .modal .score small { font-size: 22px; color: var(--ink-soft); font-weight: 400; }
+  .modal .band {
+    font-family: Inter, sans-serif; font-size: 14px;
+    color: var(--ink-soft); margin-bottom: 18px;
+  }
+  .breakdown {
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px;
+    margin: 18px 0 22px;
+  }
+  .breakdown .cell {
+    font-family: Inter, sans-serif; font-size: 11px;
+    padding: 8px 4px; border-radius: 7px;
+    display: flex; flex-direction: column; align-items: center; gap: 2px;
+  }
+  .breakdown .cell .qn { font-weight: 600; font-size: 11px; color: var(--ink-soft); }
+  .breakdown .cell .v { font-size: 16px; font-weight: 700; }
+  .breakdown .cell.ok { background: var(--good-bg); color: var(--good); }
+  .breakdown .cell.no { background: var(--bad-bg); color: var(--bad); }
+  .modal .actions { display: flex; gap: 10px; justify-content: center; margin-top: 8px; }
+  .modal button {
+    font-family: Inter, sans-serif; font-size: 13px; font-weight: 600;
+    padding: 10px 18px; border-radius: 9px; cursor: pointer;
+  }
+  .modal .primary { background: var(--accent); color: #fff; border: 1px solid var(--accent); }
+  .modal .primary:hover { background: #18305b; }
+  .modal .ghost { background: transparent; color: var(--ink); border: 1px solid var(--rule); }
+  .modal .ghost:hover { background: #fff; }
+
+  ::selection { background: #ffe78a; }
+</style>
+</head>
+<body>
+
+<!-- ====== Top bar ====== -->
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <span class="eyebrow">Cambridge 21 · Test 1 · Listening</span>
+      <span class="title">Part 1 · Questions 1–10</span>
+    </div>
+    <div class="spacer"></div>
+    <button class="tool-toggle" id="hlToggle" aria-pressed="false" title="Toggle highlighter (H)">
+      <span class="swatch" aria-hidden="true"></span>
+      <span>Highlighter</span>
+    </button>
+    <div class="timer" id="timer" role="timer" aria-live="polite">
+      <span class="dot"></span>
+      <span class="timer-num" id="timerNum">10:00</span>
+      <span class="timer-label">Remaining</span>
+    </div>
+    <button class="submit-btn" id="submitBtn">Submit answers</button>
+  </div>
+</div>
+
+<main>
+  <header class="doc-head">
+    <div class="kicker">Listening · Part 1</div>
+    <h1>Oyster Bay Sailing Club Courses</h1>
+    <p class="sub">Listen to the recording and answer questions 1 to 10.</p>
+  </header>
+
+  <!-- ====== Audio (sticky) ====== -->
+  <div class="audio-sticky">
+    <section class="audio-card" aria-label="Listening audio">
+      <div class="audio-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M11 5L6 9H3v6h3l5 4V5z"/>
+          <path d="M15.5 8.5a4 4 0 010 7"/>
+          <path d="M18.5 5.5a8 8 0 010 13"/>
+        </svg>
+      </div>
+      <div class="audio-meta">
+        <span class="label">Listening Track</span>
+        <span class="name">Part 1 — Oyster Bay Sailing Club</span>
+        <span class="hint">Press play once. The recording will play continuously.</span>
+      </div>
+      <div class="audio-frame-wrap">
+        <iframe
+          src="https://drive.google.com/file/d/1_I_L5O1mJP04lcthOaJhf9_UYP7608u1/preview"
+          allow="autoplay"
+          title="Cam 21 Test 1 Part 1 audio">
+        </iframe>
+      </div>
+    </section>
+  </div>
+
+  <!-- ============== Q 1-6: Table completion ============== -->
+  <section class="qblock" data-group="1-6">
+    <div class="qhead">
+      <span class="qrange">Questions 1 — 6</span>
+      <span class="qcount">6 marks</span>
+    </div>
+    <p class="instruction">Complete the table below.</p>
+    <p class="instruction">Write <strong>ONE WORD AND/OR A NUMBER</strong> for each answer.</p>
+    <p class="topic">Oyster Bay Sailing Club Courses</p>
+
+    <div class="table-scroll">
+      <table class="completion">
+        <thead>
+          <tr>
+            <th scope="col">Name of course</th>
+            <th scope="col">What you learn</th>
+            <th scope="col">Cost</th>
+            <th scope="col">Other information</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="course-name">Taster day</td>
+            <td>introduction to sailing</td>
+            <td>£120 if booking one place</td>
+            <td>small groups (max
+              <span class="gap"><span class="qnum">1</span><input class="ti narrow" type="text" data-q="1" data-correct="10|ten" autocomplete="off" spellcheck="false" aria-label="Answer 1" /><span class="verdict"></span></span>
+              people)
+            </td>
+          </tr>
+          <tr>
+            <td class="course-name">Level 1</td>
+            <td>
+              <ul class="cell-list">
+                <li>basic theory e.g. understanding the
+                  <span class="gap"><span class="qnum">2</span><input class="ti" type="text" data-q="2" data-correct="weather" autocomplete="off" spellcheck="false" aria-label="Answer 2" /><span class="verdict"></span></span>
+                  and tides
+                </li>
+                <li>basic sailing skills including
+                  <span class="gap"><span class="qnum">3</span><input class="ti" type="text" data-q="3" data-correct="safety" autocomplete="off" spellcheck="false" aria-label="Answer 3" /><span class="verdict"></span></span>
+                  information
+                </li>
+              </ul>
+            </td>
+            <td>
+              <ul class="cell-list">
+                <li>£200</li>
+                <li><span class="gap"><span class="qnum">4</span><input class="ti" type="text" data-q="4" data-correct="discount" autocomplete="off" spellcheck="false" aria-label="Answer 4" /><span class="verdict"></span></span>
+                  available for club members
+                </li>
+                <li>all inclusive (plus a useful
+                  <span class="gap"><span class="qnum">5</span><input class="ti" type="text" data-q="5" data-correct="dictionary" autocomplete="off" spellcheck="false" aria-label="Answer 5" /><span class="verdict"></span></span>)
+                </li>
+              </ul>
+            </td>
+            <td>a
+              <span class="gap"><span class="qnum">6</span><input class="ti" type="text" data-q="6" data-correct="certificate" autocomplete="off" spellcheck="false" aria-label="Answer 6" /><span class="verdict"></span></span>
+              at the end of the course for all participants
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============== Q 7-10: Notes completion ============== -->
+  <section class="qblock" data-group="7-10">
+    <div class="qhead">
+      <span class="qrange">Questions 7 — 10</span>
+      <span class="qcount">4 marks</span>
+    </div>
+    <p class="instruction">Complete the notes below.</p>
+    <p class="instruction">Write <strong>ONE WORD ONLY</strong> for each answer.</p>
+
+    <div class="notes-card">
+      <div class="notes-banner">General information</div>
+      <ul>
+        <li class="bullet">Participants must be able to swim.</li>
+        <li class="bullet">Bring suitable clothing, a
+          <span class="gap"><span class="qnum">7</span><input class="ti" type="text" data-q="7" data-correct="towel" autocomplete="off" spellcheck="false" aria-label="Answer 7" /><span class="verdict"></span></span>
+          and toiletries (e.g. shampoo).
+        </li>
+        <li class="bullet">There is a
+          <span class="gap"><span class="qnum">8</span><input class="ti" type="text" data-q="8" data-correct="café|cafe" autocomplete="off" spellcheck="false" aria-label="Answer 8" /><span class="verdict"></span></span>
+          at the club.
+        </li>
+        <li class="bullet">Online training
+          <span class="gap"><span class="qnum">9</span><input class="ti" type="text" data-q="9" data-correct="videos" autocomplete="off" spellcheck="false" aria-label="Answer 9" /><span class="verdict"></span></span>
+          are recommended.
+        </li>
+        <li class="bullet"><span class="gap"><span class="qnum">10</span><input class="ti" type="text" data-q="10" data-correct="lockers" autocomplete="off" spellcheck="false" aria-label="Answer 10" /><span class="verdict"></span></span>
+          are available for course participants.
+        </li>
+      </ul>
+    </div>
+  </section>
+</main>
+
+<!-- floating highlight hint -->
+<div class="hl-hint" id="hlHint">
+  <span class="swatch"></span>
+  <span><strong>Highlighter on.</strong> Select any text in a question to highlight it. Click a highlight to remove.</span>
+</div>
+
+<!-- ====== Results modal ====== -->
+<div class="modal-back" id="modalBack" role="dialog" aria-modal="true" aria-labelledby="resultTitle">
+  <div class="modal">
+    <span class="eyebrow">Result</span>
+    <h2 id="resultTitle">Test submitted</h2>
+    <div class="score"><span id="scoreNum">0</span><small> / 10</small></div>
+    <div class="band" id="scoreBand">—</div>
+    <div class="breakdown" id="breakdown"></div>
+    <div class="actions">
+      <button class="ghost" id="reviewBtn">Review my paper</button>
+      <button class="primary" id="retryBtn">Try again</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ======================================================================
+   1) Timer (10:00 countdown)
+   ====================================================================== */
+const DURATION = 10 * 60;
+let remaining = DURATION;
+let timerHandle = null;
+const timerEl = document.getElementById('timer');
+const timerNumEl = document.getElementById('timerNum');
+
+function fmt(s) {
+  const m = Math.floor(s/60), r = s%60;
+  return String(m).padStart(2,'0') + ':' + String(r).padStart(2,'0');
+}
+function tick() {
+  remaining -= 1;
+  if (remaining <= 0) {
+    remaining = 0;
+    timerNumEl.textContent = '00:00';
+    clearInterval(timerHandle); timerHandle = null;
+    submitTest(true);
+    return;
+  }
+  timerNumEl.textContent = fmt(remaining);
+  timerEl.classList.toggle('warn', remaining <= 120 && remaining > 30);
+  timerEl.classList.toggle('danger', remaining <= 30);
+}
+function startTimer() { if (!timerHandle) timerHandle = setInterval(tick, 1000); }
+function stopTimer() { clearInterval(timerHandle); timerHandle = null; }
+let started = false;
+function maybeStart() { if (started) return; started = true; startTimer(); }
+window.addEventListener('click', maybeStart, { once: true });
+window.addEventListener('keydown', maybeStart, { once: true });
+
+/* ======================================================================
+   2) Highlighter
+   ====================================================================== */
+const HL_ZONES = '.qblock';
+const hlToggle = document.getElementById('hlToggle');
+const hlHint = document.getElementById('hlHint');
+let hlMode = false;
+function setHlMode(on) {
+  hlMode = on;
+  document.body.classList.toggle('hl-mode', on);
+  hlToggle.classList.toggle('active', on);
+  hlToggle.setAttribute('aria-pressed', on ? 'true' : 'false');
+  hlHint.classList.toggle('show', on);
+}
+hlToggle.addEventListener('click', () => setHlMode(!hlMode));
+document.addEventListener('keydown', e => {
+  if (e.key && e.key.toLowerCase() === 'h' && !e.target.matches('input, select, textarea')) setHlMode(!hlMode);
+});
+document.addEventListener('mouseup', () => {
+  if (!hlMode) return;
+  const sel = window.getSelection();
+  if (!sel || sel.isCollapsed) return;
+  const range = sel.getRangeAt(0);
+  if (range.collapsed) return;
+  const container = range.commonAncestorContainer;
+  const host = (container.nodeType === 1 ? container : container.parentElement).closest(HL_ZONES);
+  if (!host) return;
+  if (range.startContainer.parentElement && range.startContainer.parentElement.closest('input,select,button,img,iframe')) return;
+  try { wrapRangeWithHighlight(range); sel.removeAllRanges(); } catch (_) {}
+});
+document.addEventListener('click', e => {
+  const hl = e.target.closest('.hl');
+  if (!hl) return;
+  const parent = hl.parentNode;
+  while (hl.firstChild) parent.insertBefore(hl.firstChild, hl);
+  parent.removeChild(hl);
+  parent.normalize();
+});
+function wrapRangeWithHighlight(range) {
+  const root = range.commonAncestorContainer;
+  const rootEl = root.nodeType === 1 ? root : root.parentElement;
+  const walker = document.createTreeWalker(rootEl, NodeFilter.SHOW_TEXT, {
+    acceptNode(node) {
+      if (!range.intersectsNode(node)) return NodeFilter.FILTER_REJECT;
+      if (node.parentElement.closest('input,select,button,iframe,.qnum,.verdict')) return NodeFilter.FILTER_REJECT;
+      return NodeFilter.FILTER_ACCEPT;
+    }
+  });
+  const nodes = []; let n;
+  while ((n = walker.nextNode())) nodes.push(n);
+  nodes.forEach(node => {
+    if (!node.nodeValue || !node.nodeValue.trim()) return;
+    let start = 0, end = node.nodeValue.length;
+    if (node === range.startContainer) start = range.startOffset;
+    if (node === range.endContainer) end = range.endOffset;
+    if (end <= start) return;
+    const before = node.nodeValue.slice(0, start);
+    const middle = node.nodeValue.slice(start, end);
+    const after = node.nodeValue.slice(end);
+    if (!middle.trim()) return;
+    const parent = node.parentNode;
+    const frag = document.createDocumentFragment();
+    if (before) frag.appendChild(document.createTextNode(before));
+    const span = document.createElement('span');
+    span.className = 'hl'; span.textContent = middle;
+    frag.appendChild(span);
+    if (after) frag.appendChild(document.createTextNode(after));
+    parent.replaceChild(frag, node);
+  });
+}
+
+/* ======================================================================
+   3) Submit + scoring
+   ====================================================================== */
+const submitBtn = document.getElementById('submitBtn');
+const modalBack = document.getElementById('modalBack');
+const scoreNum = document.getElementById('scoreNum');
+const scoreBand = document.getElementById('scoreBand');
+const breakdownEl = document.getElementById('breakdown');
+const reviewBtn = document.getElementById('reviewBtn');
+const retryBtn = document.getElementById('retryBtn');
+
+submitBtn.addEventListener('click', () => submitTest(false));
+
+function normalize(s) {
+  return (s || '').trim().toLowerCase().replace(/[.,;:'"!?]/g, '').replace(/\s+/g, ' ');
+}
+function matchesText(value, correctAttr) {
+  const got = normalize(value);
+  if (!got) return false;
+  return correctAttr.split('|').map(normalize).some(c => c.length && c === got);
+}
+
+function submitTest(forced) {
+  if (document.body.classList.contains('submitted')) return;
+  if (!forced) {
+    const unanswered = countUnanswered();
+    if (unanswered > 0) {
+      const msg = unanswered === 1
+        ? "There is 1 question unanswered. Submit anyway?"
+        : "There are " + unanswered + " questions unanswered. Submit anyway?";
+      if (!confirm(msg)) return;
+    }
+  }
+  stopTimer();
+  document.body.classList.add('submitted');
+
+  const perQ = {};
+  let total = 0;
+
+  document.querySelectorAll('.ti').forEach(inp => {
+    const q = parseInt(inp.dataset.q, 10);
+    const ok = matchesText(inp.value, inp.dataset.correct || '');
+    perQ[q] = ok;
+    if (ok) total += 1;
+    inp.classList.add(ok ? 'ok' : 'no');
+    const v = inp.parentElement.querySelector('.verdict');
+    if (v) { v.classList.add(ok ? 'ok' : 'no'); v.textContent = ok ? '✓' : '✗'; }
+  });
+
+  scoreNum.textContent = total;
+  scoreBand.textContent = bandFor(total);
+
+  breakdownEl.innerHTML = '';
+  for (let q = 1; q <= 10; q++) {
+    const cell = document.createElement('div');
+    cell.className = 'cell ' + (perQ[q] ? 'ok' : 'no');
+    cell.innerHTML = '<span class="qn">Q' + q + '</span><span class="v">' + (perQ[q] ? '✓' : '✗') + '</span>';
+    breakdownEl.appendChild(cell);
+  }
+  modalBack.classList.add('show');
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Submitted';
+}
+
+function countUnanswered() {
+  let n = 0;
+  document.querySelectorAll('.ti').forEach(inp => { if (!inp.value.trim()) n++; });
+  return n;
+}
+
+function bandFor(score) {
+  if (score === 10) return 'Outstanding — full marks on Part 1.';
+  if (score >= 8) return 'Strong performance — review the missed items.';
+  if (score >= 6) return 'Solid pass — keep practising tricky spellings.';
+  if (score >= 4) return 'Getting there — focus on the details.';
+  return 'Keep going — listen again and try once more.';
+}
+
+reviewBtn.addEventListener('click', () => modalBack.classList.remove('show'));
+retryBtn.addEventListener('click', () => location.reload());
+modalBack.addEventListener('click', e => { if (e.target === modalBack) modalBack.classList.remove('show'); });
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) submitTest(false);
+});
+</script>
+</body>
+</html>
