@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="vi"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Vocabulary Quiz · Listening 1-7</title>
+
+<style>
+  :root {
+    --bg: #f6f1e7;
+    --bg-soft: #fbf7ee;
+    --ink: #1f2a26;
+    --ink-soft: #5a655f;
+    --line: #e3dccb;
+    --accent: #1f5d4c;
+    --accent-soft: #e8efe9;
+    --wrong: #b04646;
+    --right: #2f7a52;
+    --shadow: 0 1px 0 #00000008, 0 12px 40px -20px #1f2a2630;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.45;
+  }
+  .shell {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 32px 24px 80px;
+  }
+  header.top {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .brand {
+    font-size: 13px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    font-weight: 600;
+  }
+  .counter {
+    font-variant-numeric: tabular-nums;
+    font-size: 13px;
+    color: var(--ink-soft);
+    letter-spacing: 0.06em;
+  }
+  .progress {
+    height: 4px;
+    background: var(--line);
+    border-radius: 99px;
+    overflow: hidden;
+    margin-bottom: 32px;
+  }
+  .progress > div {
+    height: 100%;
+    background: var(--accent);
+    width: 0%;
+    transition: width 320ms cubic-bezier(.2,.7,.2,1);
+  }
+
+  .card {
+    background: var(--bg-soft);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 36px 32px 28px;
+    box-shadow: var(--shadow);
+  }
+  .prompt-label {
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin: 0 0 14px;
+    font-weight: 600;
+  }
+  .word {
+    font-size: clamp(36px, 6vw, 52px);
+    line-height: 1.1;
+    margin: 0 0 8px;
+    letter-spacing: -0.015em;
+    font-weight: 600;
+  }
+  .helper {
+    font-size: 14px;
+    color: var(--ink-soft);
+    margin: 0 0 28px;
+  }
+  .options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  @media (max-width: 620px) {
+    .options { grid-template-columns: 1fr; }
+  }
+  .opt {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    text-align: left;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 10px 12px;
+    font: inherit;
+    color: var(--ink);
+    font-size: 14.5px;
+    line-height: 1.3;
+    cursor: pointer;
+    transition: border-color 120ms, background 120ms, transform 120ms;
+  }
+  .opt:hover { border-color: #c9c0a8; background: #fffdf6; }
+  .opt:active { transform: scale(0.995); }
+  .opt .bullet {
+    min-width: 26px; height: 22px; flex: none;
+    border-radius: 99px;
+    border: 1.5px solid var(--line);
+    display: grid; place-items: center;
+    font-size: 10.5px; color: var(--ink-soft);
+    letter-spacing: 0;
+    font-weight: 600;
+    background: #fff;
+    font-variant-numeric: tabular-nums;
+    padding: 0 6px;
+  }
+  .opt.selected { border-color: var(--accent); background: var(--accent-soft); }
+  .opt.selected .bullet {
+    background: var(--accent); color: #fff; border-color: var(--accent);
+  }
+  .opt.selected .bullet::before { content: "✓"; font-size: 13px; }
+  .opt.selected .bullet > span { display: none; }
+
+  .actions {
+    margin-top: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .hint {
+    font-size: 13px;
+    color: var(--ink-soft);
+  }
+  .btn {
+    appearance: none;
+    border: 0;
+    background: var(--accent);
+    color: #fff;
+    font: inherit;
+    font-weight: 600;
+    padding: 12px 22px;
+    border-radius: 99px;
+    cursor: pointer;
+    letter-spacing: 0.02em;
+    transition: background 120ms, transform 120ms, opacity 120ms;
+  }
+  .btn:hover { background: #18493b; }
+  .btn:active { transform: scale(0.98); }
+  .btn[disabled] { background: #b9bdb4; cursor: not-allowed; }
+  .btn.ghost {
+    background: transparent;
+    color: var(--ink);
+    border: 1px solid var(--line);
+  }
+  .btn.ghost:hover { background: #fff; }
+
+  /* Results */
+  .results .summary {
+    display: flex;
+    align-items: baseline;
+    gap: 18px;
+    margin-bottom: 8px;
+  }
+  .score {
+    font-size: clamp(56px, 9vw, 80px);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  .score .of { color: var(--ink-soft); font-weight: 400; }
+  .summary-sub { color: var(--ink-soft); font-size: 15px; }
+  .legend {
+    display: flex; gap: 18px; align-items: center;
+    margin: 22px 0 14px;
+    font-size: 13px; color: var(--ink-soft);
+  }
+  .pill {
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .dot { width: 10px; height: 10px; border-radius: 99px; display: inline-block; }
+  .dot.r { background: var(--right); }
+  .dot.w { background: var(--wrong); }
+  .review-list {
+    list-style: none;
+    margin: 0; padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 8px;
+  }
+  .review-list li {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 14px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: #fff;
+    font-size: 15px;
+  }
+  .mark {
+    width: 22px; height: 22px; flex: none;
+    border-radius: 99px;
+    display: grid; place-items: center;
+    color: #fff; font-size: 12px; font-weight: 700;
+  }
+  .mark.r { background: var(--right); }
+  .mark.w { background: var(--wrong); }
+  .review-list li .w-text { font-weight: 500; }
+  .footer-actions { margin-top: 28px; display: flex; gap: 12px; }
+
+  .hidden { display: none !important; }
+
+  @media (max-width: 540px) {
+    .card { padding: 28px 22px 22px; }
+    .actions { flex-direction: column-reverse; align-items: stretch; }
+    .actions .btn { width: 100%; }
+    .hint { text-align: center; }
+  }
+
+  /* === Student-info gate (shown before the quiz starts) === */
+  .gate-overlay {
+    position: fixed; inset: 0;
+    background: rgba(20,30,25,0.55);
+    backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 9999; padding: 20px;
+  }
+  .gate-card {
+    background: var(--bg-soft);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 36px 32px 28px;
+    max-width: 460px; width: 100%;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.28);
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  }
+  .gate-card .gate-eyebrow {
+    font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--accent); margin: 0 0 8px; font-weight: 600;
+  }
+  .gate-card h2 {
+    font-size: 26px; margin: 0 0 8px;
+    letter-spacing: -0.015em; font-weight: 600; color: var(--ink);
+  }
+  .gate-card .gate-sub {
+    font-size: 14px; color: var(--ink-soft); margin: 0 0 22px;
+  }
+  .gate-field { margin-bottom: 14px; }
+  .gate-field label {
+    display: block; font-size: 12px; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--ink-soft);
+    margin-bottom: 6px; font-weight: 600;
+  }
+  .gate-field label .req { color: var(--wrong); margin-left: 2px; }
+  .gate-field input {
+    width: 100%; font: inherit; font-size: 15px; color: var(--ink);
+    background: #fff; border: 1px solid var(--line);
+    border-radius: 10px; padding: 10px 12px; outline: none;
+    transition: border-color .15s, box-shadow .15s;
+  }
+  .gate-field input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+  }
+  .gate-field input.invalid {
+    border-color: var(--wrong); background: #fbeceb;
+  }
+  .gate-error {
+    font-size: 13px; color: var(--wrong);
+    margin: 0 0 12px; min-height: 18px;
+  }
+  .gate-actions { display: flex; justify-content: flex-end; margin-top: 6px; }
+  /* Identity badge added to the header once the gate closes */
+  .student-tag {
+    font-size: 12px; color: var(--ink-soft);
+    padding: 4px 10px; border: 1px solid var(--line);
+    border-radius: 99px; background: #fff; white-space: nowrap;
+    letter-spacing: 0.04em;
+  }
+  .student-tag b { color: var(--ink); font-weight: 600; }
+</style>
+</head>
+<body>
+
+  <!-- Student-info gate: must enter Name + Class before starting the quiz -->
+  <div class="gate-overlay" id="gate-overlay" role="dialog" aria-modal="true" aria-labelledby="gate-title">
+    <div class="gate-card">
+      <p class="gate-eyebrow">Trước khi bắt đầu</p>
+      <h2 id="gate-title">Thông tin học viên</h2>
+      <p class="gate-sub">Vui lòng nhập họ tên và lớp của bạn. Kết quả sẽ được gửi cho giáo viên sau khi bạn hoàn thành bài.</p>
+      <div class="gate-field">
+        <label for="gate-name">Họ tên<span class="req">*</span></label>
+        <input type="text" id="gate-name" autocomplete="name" spellcheck="false" />
+      </div>
+      <div class="gate-field">
+        <label for="gate-class">Lớp<span class="req">*</span></label>
+        <input type="text" id="gate-class" autocomplete="off" spellcheck="false" />
+      </div>
+      <p class="gate-error" id="gate-error"></p>
+      <div class="gate-actions">
+        <button class="btn" id="gate-start" type="button">Bắt đầu →</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="shell">
+    <header class="top">
+      <div class="brand">Listening 1 · 7 — Vocabulary</div>
+      <div class="counter" id="counter">—</div>
+    </header>
+    <div class="progress"><div id="bar"></div></div>
+
+    <!-- Quiz view -->
+    <section id="quiz" class="card">
+      <p class="prompt-label">Chọn nghĩa đúng</p>
+      <h1 class="word" id="word"></h1>
+      <p class="helper">Chọn nghĩa đúng từ danh sách bên dưới, sau đó nhấn <strong>Tiếp theo</strong>.</p>
+      <div class="options" id="options" role="radiogroup" aria-label="Đáp án"></div>
+      <div class="actions">
+        <span class="hint" id="hint">Chưa chọn đáp án</span>
+        <button class="btn" id="nextBtn" disabled="">Tiếp theo →</button>
+      </div>
+    </section>
+
+    <!-- Results view -->
+    <section id="results" class="card results hidden">
+      <p class="prompt-label">Kết quả</p>
+      <div class="summary">
+        <div class="score"><span id="rightCount">0</span><span class="of"> / <span id="totalCount">0</span></span></div>
+        <div class="summary-sub" id="summarySub"></div>
+      </div>
+      <div class="legend">
+        <span class="pill"><span class="dot r"></span>Đúng</span>
+        <span class="pill"><span class="dot w"></span>Sai</span>
+        <span style="margin-left:auto">Đáp án chính xác không được hiển thị.</span>
+      </div>
+      <ul class="review-list" id="reviewList"></ul>
+      <div class="footer-actions">
+        <button class="btn" id="restartBtn">Làm lại</button>
+      </div>
+    </section>
+  </div>
+
+<script>
+  // Vocabulary — verbatim from source document (Listening 1/7)
+  const VOCAB = [
+    ["Extraordinary (adj)", "phi thường, đặc biệt"],
+    ["Organ (n)", "cơ quan (trong cơ thể)"],
+    ["Mammal (n)", "động vật có vú"],
+    ["Rare (adj)", "hiếm, quý hiếm"],
+    ["Emphasis (n)", "sự nhấn mạnh, trọng tâm"],
+    ["Endangered (adj)", "có nguy cơ tuyệt chủng"],
+    ["Tangle (v)", "bị vướng vào, bị mắc vào"],
+    ["Gear (n)", "dụng cụ, thiết bị (ngư cụ)"],
+    ["Conservationist (n)", "nhà bảo tồn, người hoạt động bảo tồn thiên nhiên"],
+    ["Reproductive (adj)", "liên quan đến sinh sản"],
+    ["Replenish (v)", "bổ sung lại, làm đầy lại (số lượng)"],
+    ["Sanctuary (n)", "khu bảo tồn, nơi trú ẩn an toàn"],
+    ["Consequence (n)", "hệ quả, kết quả"],
+    ["Marine (adj)", "thuộc về biển, hải dương"],
+    ["Biologist (n)", "nhà sinh vật học"],
+    ["Breeding (n)", "sự sinh sản, sinh trưởng (của động vật)"],
+    ["Disturb (v)", "làm phiền, quấy rối, xâm phạm"],
+    ["Inhabit (v)", "sinh sống tại, cư trú ở"],
+    ["Rear (n)", "phía sau, đuôi (của tàu thuyền)"],
+    ["Fierce (adj)", "hung dữ, dữ tợn"],
+    ["Spot (v)", "phát hiện, nhìn thấy (từ xa)"],
+    ["Vast (adj)", "rộng lớn, mênh mông"],
+    ["Anatomy (n)", "giải phẫu học; cấu trúc cơ thể"],
+    ["Characteristic (n)", "đặc điểm, đặc trưng"],
+    ["Entire (adj)", "toàn bộ, tất cả"],
+    ["Solitary (adj)", "sống đơn độc, không theo đàn"],
+  ];
+
+  // Shuffle helper
+  function shuffled(arr) {
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  // Build a question: word + the full list of meanings (shuffled once globally).
+  const ALL_MEANINGS = VOCAB.map(p => p[1]);
+  const SHUFFLED_MEANINGS = shuffled(ALL_MEANINGS);
+
+  function buildQuestion(index) {
+    const [word, correct] = VOCAB[index];
+    return { word, correct, choices: SHUFFLED_MEANINGS };
+  }
+
+  // State — keep words in original order.
+  let questions = VOCAB.map((_, i) => buildQuestion(i));
+  let current = 0;
+  let answers = new Array(questions.length).fill(null);
+
+  // DOM
+  const $word = document.getElementById("word");
+  const $opts = document.getElementById("options");
+  const $next = document.getElementById("nextBtn");
+  const $counter = document.getElementById("counter");
+  const $bar = document.getElementById("bar");
+  const $hint = document.getElementById("hint");
+  const $quiz = document.getElementById("quiz");
+  const $results = document.getElementById("results");
+
+  function render() {
+    const q = questions[current];
+    $counter.textContent = `Từ ${current + 1} / ${questions.length}`;
+    $bar.style.width = `${(current / questions.length) * 100}%`;
+    $word.textContent = q.word;
+    $opts.innerHTML = "";
+    q.choices.forEach((choice, i) => {
+      const btn = document.createElement("button");
+      btn.className = "opt";
+      btn.type = "button";
+      btn.setAttribute("role", "radio");
+      btn.setAttribute("aria-checked", answers[current] === choice ? "true" : "false");
+      if (answers[current] === choice) btn.classList.add("selected");
+      btn.innerHTML = `<span class="bullet"><span>${i + 1}</span></span><span class="text"></span>`;
+      btn.querySelector(".text").textContent = choice;
+      btn.addEventListener("click", () => {
+        answers[current] = choice;
+        render();
+      });
+      $opts.appendChild(btn);
+    });
+    const isLast = current === questions.length - 1;
+    $next.textContent = isLast ? "Xem kết quả" : "Tiếp theo →";
+    if (answers[current] == null) {
+      $next.disabled = true;
+      $hint.textContent = "Chưa chọn đáp án";
+    } else {
+      $next.disabled = false;
+      $hint.textContent = "Sẵn sàng";
+    }
+  }
+
+  $next.addEventListener("click", () => {
+    if (answers[current] == null) return;
+    if (current < questions.length - 1) {
+      current += 1;
+      render();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } else {
+      showResults();
+    }
+  });
+
+  function showResults() {
+    $quiz.classList.add("hidden");
+    $results.classList.remove("hidden");
+    $bar.style.width = "100%";
+    $counter.textContent = `Hoàn thành`;
+
+    const total = questions.length;
+    let right = 0;
+    const list = document.getElementById("reviewList");
+    list.innerHTML = "";
+    questions.forEach((q, i) => {
+      const ok = answers[i] === q.correct;
+      if (ok) right += 1;
+      const li = document.createElement("li");
+      li.innerHTML = `<span class="mark ${ok ? "r" : "w"}">${ok ? "✓" : "✗"}</span><span class="w-text"></span>`;
+      li.querySelector(".w-text").textContent = q.word;
+      list.appendChild(li);
+    });
+    document.getElementById("rightCount").textContent = right;
+    document.getElementById("totalCount").textContent = total;
+    const pct = Math.round((right / total) * 100);
+    let msg;
+    if (pct === 100) msg = "Hoàn hảo — bạn nhớ hết từ vựng!";
+    else if (pct >= 80) msg = "Rất tốt — chỉ cần ôn lại vài từ.";
+    else if (pct >= 60) msg = "Khá ổn — hãy xem lại các từ còn nhầm.";
+    else if (pct >= 40) msg = "Cần luyện tập thêm — thử lại nhé.";
+    else msg = "Đừng nản — học lại và làm lại bài này.";
+    document.getElementById("summarySub").textContent = `${pct}% đúng. ${msg}`;
+  }
+
+  document.getElementById("restartBtn").addEventListener("click", () => {
+    // Re-shuffle the meanings list, but keep the word order fixed.
+    const newShuffled = shuffled(ALL_MEANINGS);
+    questions = VOCAB.map(([w, c]) => ({ word: w, correct: c, choices: newShuffled }));
+    current = 0;
+    answers = new Array(questions.length).fill(null);
+    $results.classList.add("hidden");
+    $quiz.classList.remove("hidden");
+    render();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+
+  // Keyboard: Enter to advance once an option has been chosen.
+  window.addEventListener("keydown", (e) => {
+    if (!$results.classList.contains("hidden")) return;
+    if (e.key === "Enter") {
+      if (!$next.disabled) $next.click();
+    }
+  });
+
+  /* ======================================================================
+     Student-info gate + Google Form submission
+     ====================================================================== */
+  const GOOGLE_FORM = {
+    formId: "1FAIpQLSe3ybyIJtcpTDtwV7pVhLjtikfcNTBNGDszx1XJwkXg5O4FlA",
+    fields: {
+      name:    "entry.9952540",
+      class:   "entry.1653161462",
+      answers: "entry.1458996933",
+      score:   "entry.1288401249",
+    },
+  };
+
+  const student = { name: "", class: "" };
+
+  const gateOverlay = document.getElementById("gate-overlay");
+  const gateName    = document.getElementById("gate-name");
+  const gateClass   = document.getElementById("gate-class");
+  const gateError   = document.getElementById("gate-error");
+  const gateStart   = document.getElementById("gate-start");
+
+  function startPractice() {
+    const nameVal  = gateName.value.trim();
+    const classVal = gateClass.value.trim();
+    gateName.classList.toggle("invalid", !nameVal);
+    gateClass.classList.toggle("invalid", !classVal);
+    if (!nameVal || !classVal) {
+      gateError.textContent = "Vui lòng nhập đầy đủ họ tên và lớp.";
+      (nameVal ? gateClass : gateName).focus();
+      return;
+    }
+    student.name  = nameVal;
+    student.class = classVal;
+    gateError.textContent = "";
+    gateOverlay.style.display = "none";
+
+    // Identity badge in the header
+    const headerTop = document.querySelector("header.top");
+    if (headerTop) {
+      const tag = document.createElement("span");
+      tag.className = "student-tag";
+      tag.innerHTML = "Học viên \u00b7 <b></b> \u00b7 Lớp \u00b7 <b></b>";
+      tag.querySelectorAll("b")[0].textContent = student.name;
+      tag.querySelectorAll("b")[1].textContent = student.class;
+      headerTop.appendChild(tag);
+    }
+  }
+
+  gateStart.addEventListener("click", startPractice);
+  [gateName, gateClass].forEach(el => {
+    el.addEventListener("keydown", e => {
+      if (e.key === "Enter") { e.preventDefault(); startPractice(); }
+    });
+    el.addEventListener("input", () => {
+      el.classList.remove("invalid");
+      gateError.textContent = "";
+    });
+  });
+  setTimeout(() => gateName.focus(), 50);
+
+  // Build transcript: word, student's selected meaning, and ✓/✕.
+  // Correct meanings are NOT included (per the on-screen note
+  // "Đáp án chính xác không được hiển thị").
+  function collectAnswersTranscript() {
+    const lines = [];
+    questions.forEach((q, i) => {
+      const picked = answers[i];
+      const ok = picked === q.correct;
+      const status = picked == null ? "\u00b7" : (ok ? "\u2713" : "\u2717");
+      const text = picked == null ? "(chưa chọn)" : picked;
+      lines.push("Q" + String(i + 1).padStart(2, "0") + ". [" + status + "] " + q.word + " → " + text);
+    });
+    return lines.join("\n");
+  }
+
+  let hasSubmitted = false;
+  function submitToGoogleForm() {
+    if (hasSubmitted) return;
+    hasSubmitted = true;
+
+    const right = parseInt(document.getElementById("rightCount").textContent, 10) || 0;
+    const total = questions.length;
+    const url = "https://docs.google.com/forms/d/e/" + GOOGLE_FORM.formId + "/formResponse";
+    const payload = {
+      [GOOGLE_FORM.fields.name]:    student.name,
+      [GOOGLE_FORM.fields.class]:   student.class,
+      [GOOGLE_FORM.fields.answers]: collectAnswersTranscript(),
+      [GOOGLE_FORM.fields.score]:   right + " / " + total,
+    };
+
+    // Hidden-iframe form POST: the most reliable cross-origin write to Google Forms.
+    let iframe = document.getElementById("gf-sink");
+    if (!iframe) {
+      iframe = document.createElement("iframe");
+      iframe.name = "gf-sink"; iframe.id = "gf-sink";
+      iframe.style.display = "none";
+      document.body.appendChild(iframe);
+    }
+    const form = document.createElement("form");
+    form.action = url; form.method = "POST"; form.target = "gf-sink";
+    form.style.display = "none";
+    Object.entries(payload).forEach(([k, v]) => {
+      const inp = document.createElement("input");
+      inp.type = "hidden"; inp.name = k; inp.value = v;
+      form.appendChild(inp);
+    });
+    document.body.appendChild(form);
+
+    let settled = false;
+    const onLoad = () => {
+      if (settled) return;
+      settled = true;
+      iframe.removeEventListener("load", onLoad);
+      setTimeout(() => form.remove(), 100);
+    };
+    iframe.addEventListener("load", onLoad);
+    form.submit();
+    setTimeout(() => {
+      if (settled) return;
+      settled = true;
+      iframe.removeEventListener("load", onLoad);
+      hasSubmitted = false; // allow retry
+      try { form.remove(); } catch (_) {}
+    }, 8000);
+  }
+
+  // Hook into showResults() via observation of #results losing the "hidden" class.
+  // restartBtn re-adds "hidden", so the observer also resets hasSubmitted then
+  // (via the restartBtn handler below) — but only after the next showResults().
+  const _resultsObserver = new MutationObserver(() => {
+    if (!$results.classList.contains("hidden") && !hasSubmitted) {
+      requestAnimationFrame(() => submitToGoogleForm());
+    }
+  });
+  _resultsObserver.observe($results, { attributes: true, attributeFilter: ["class"] });
+
+  // Allow re-submission after Làm lại (restart): when the student retakes the
+  // quiz and finishes again, that's a new attempt and should be recorded.
+  document.getElementById("restartBtn").addEventListener("click", () => {
+    hasSubmitted = false;
+  });
+
+  render();
+</script>
+
+
+</body></html>
