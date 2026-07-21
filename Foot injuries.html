@@ -1,0 +1,1018 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Listening — Part 3 · Foot Injuries</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #fbf7ee;
+    --paper-2: #f3ecdc;
+    --ink: #1a1a1a;
+    --ink-soft: #4a4a4a;
+    --rule: #d9cfb8;
+    --rule-soft: #ebe2cc;
+    --accent: #1f3b6b;
+    --accent-soft: #e3eaf6;
+    --highlight: #ffe78a;
+    --highlight-deep: #f5c43c;
+    --good: #1f6a3a;
+    --good-bg: #dff0e0;
+    --bad: #a8203b;
+    --bad-bg: #f7dde2;
+    --shadow: 0 1px 0 rgba(20,20,20,.05), 0 12px 32px -18px rgba(20,20,20,.25);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Source Serif 4", Cambria, Georgia, serif;
+    font-size: 17px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  body::before {
+    content:"";
+    position: fixed; inset: 0;
+    pointer-events: none;
+    background-image:
+      radial-gradient(rgba(60,40,10,.035) 1px, transparent 1px),
+      radial-gradient(rgba(60,40,10,.025) 1px, transparent 1px);
+    background-size: 3px 3px, 7px 7px;
+    background-position: 0 0, 1px 2px;
+    z-index: 0;
+  }
+
+  /* === Top bar === */
+  .topbar {
+    position: sticky; top: 0; z-index: 30;
+    background: rgba(251,247,238,.92);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--rule);
+  }
+  .topbar-inner {
+    max-width: 1000px; margin: 0 auto;
+    padding: 14px 28px;
+    display: flex; align-items: center; gap: 16px;
+    font-family: Inter, system-ui, sans-serif;
+  }
+  .brand { display: flex; flex-direction: column; line-height: 1.15; min-width: 0; }
+  .brand .eyebrow {
+    font-size: 10.5px; letter-spacing: .18em; text-transform: uppercase;
+    color: var(--ink-soft); font-weight: 600;
+  }
+  .brand .title {
+    font-family: "Source Serif 4", serif;
+    font-size: 18px; font-weight: 600;
+    color: var(--ink);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .spacer { flex: 1; }
+  .timer {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 14px;
+    background: #fff;
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+  }
+  .timer .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 0 4px var(--accent-soft);
+  }
+  .timer.warn .dot { background: #c47a14; box-shadow: 0 0 0 4px #fbe7c4; }
+  .timer.danger .dot { background: var(--bad); box-shadow: 0 0 0 4px var(--bad-bg); animation: pulse 1s infinite; }
+  @keyframes pulse { 50% { box-shadow: 0 0 0 8px var(--bad-bg); } }
+  .timer-num {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-variant-numeric: tabular-nums;
+    font-size: 18px; font-weight: 500;
+    color: var(--ink);
+    letter-spacing: .02em;
+  }
+  .timer-label {
+    font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--ink-soft);
+    border-left: 1px solid var(--rule);
+    padding-left: 10px;
+  }
+  .tool-toggle, .submit-btn {
+    font-family: Inter, system-ui, sans-serif;
+    font-size: 13px; font-weight: 600;
+    border-radius: 10px;
+    padding: 9px 14px;
+    cursor: pointer;
+    transition: transform .08s ease, background .15s ease, border-color .15s ease;
+    display: inline-flex; align-items: center; gap: 8px;
+    white-space: nowrap;
+  }
+  .tool-toggle { background: #fff; border: 1px solid var(--rule); color: var(--ink); }
+  .tool-toggle:hover { border-color: #b8a878; }
+  .tool-toggle.active {
+    background: var(--highlight);
+    border-color: var(--highlight-deep);
+    color: #4a3a00;
+  }
+  .tool-toggle .swatch {
+    width: 12px; height: 12px; border-radius: 3px;
+    background: var(--highlight);
+    border: 1px solid var(--highlight-deep);
+  }
+  .tool-toggle.active .swatch { background: #fff; }
+  .submit-btn { background: var(--accent); color: #fff; border: 1px solid var(--accent); }
+  .submit-btn:hover { background: #18305b; }
+  .submit-btn:active { transform: translateY(1px); }
+  .submit-btn[disabled] { background: #a8a8a8; border-color: #a8a8a8; cursor: not-allowed; }
+
+  /* === Page === */
+  main {
+    position: relative; z-index: 1;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 36px 56px 120px;
+  }
+  @media (max-width: 760px) {
+    main { padding: 28px 18px 100px; }
+    .topbar-inner { padding: 12px 16px; flex-wrap: wrap; gap: 10px; }
+    .timer-label { display: none; }
+    .brand .title { white-space: normal; }
+  }
+
+  .doc-head { margin: 8px 0 28px; }
+  .doc-head .kicker {
+    font-family: Inter, sans-serif;
+    font-size: 11px; letter-spacing: .22em; text-transform: uppercase;
+    color: var(--accent); font-weight: 600;
+  }
+  .doc-head h1 {
+    font-family: "Source Serif 4", serif;
+    font-size: 36px; font-weight: 600;
+    margin: 6px 0 4px;
+    letter-spacing: -.01em;
+  }
+  .doc-head .sub { color: var(--ink-soft); font-style: italic; font-size: 16px; }
+
+  /* Audio card */
+  .audio-card {
+    background: #fff;
+    border: 1px solid var(--rule);
+    border-radius: 14px;
+    padding: 18px 20px;
+    margin: 24px 0 14px;
+    box-shadow: var(--shadow);
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 18px;
+    align-items: center;
+  }
+  .audio-icon {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    display: grid; place-items: center;
+    flex-shrink: 0;
+  }
+  .audio-icon svg { width: 26px; height: 26px; }
+  .audio-meta { font-family: Inter, sans-serif; display: flex; flex-direction: column; gap: 4px; }
+  .audio-meta .label {
+    font-size: 10.5px; letter-spacing: .18em; text-transform: uppercase;
+    color: var(--ink-soft); font-weight: 600;
+  }
+  .audio-meta .name { font-family: "Source Serif 4", serif; font-size: 17px; font-weight: 600; }
+  .audio-meta .hint { font-size: 12.5px; color: var(--ink-soft); }
+  .audio-frame-wrap {
+    grid-column: 1 / -1;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #f4eedf;
+    border: 1px solid var(--rule-soft);
+  }
+  .audio-frame-wrap iframe { display: block; width: 100%; height: 76px; border: 0; }
+  .audio-sticky { position: sticky; top: 70px; z-index: 20; margin-bottom: 34px; }
+
+  /* Section heading */
+  .qblock { margin: 0 0 42px; }
+  .qhead {
+    display: flex; align-items: baseline; gap: 14px;
+    margin-bottom: 6px;
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 6px;
+  }
+  .qhead .qrange {
+    font-family: Inter, sans-serif;
+    font-size: 12px; letter-spacing: .18em; text-transform: uppercase;
+    color: var(--accent); font-weight: 700;
+  }
+  .qhead .qcount {
+    font-family: Inter, sans-serif;
+    font-size: 11.5px; color: var(--ink-soft);
+    margin-left: auto;
+  }
+  .instruction { font-style: italic; color: var(--ink-soft); margin: 8px 0 4px; }
+  .topic {
+    font-family: "Source Serif 4", serif;
+    font-size: 21px; font-weight: 600;
+    margin: 14px 0 18px;
+    text-align: center;
+    letter-spacing: -.005em;
+  }
+
+  /* === Multiple choice (single) === */
+  .mc-q { margin: 0 0 24px; }
+  .mc-stem {
+    display: flex; gap: 12px; align-items: baseline;
+    font-weight: 500; margin-bottom: 10px; font-size: 17px;
+  }
+  .mc-stem .mcnum {
+    font-family: "Source Serif 4", serif; font-weight: 700;
+    color: var(--accent); font-variant-numeric: tabular-nums;
+    flex-shrink: 0;
+  }
+  .opts { list-style: none; padding: 0; margin: 0 0 0 34px; display: flex; flex-direction: column; gap: 4px; }
+  .opts.nopad { margin-left: 0; }
+  .opt {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 9px 12px; border-radius: 8px; cursor: pointer;
+    transition: background .12s ease;
+  }
+  .opt:hover { background: var(--paper-2); }
+  .opt input { display: none; }
+  .opt .box {
+    flex-shrink: 0; width: 24px; height: 24px;
+    border: 1.5px solid var(--ink-soft);
+    display: grid; place-items: center;
+    background: #fff; font-family: Inter, sans-serif;
+    font-weight: 700; font-size: 12px; color: var(--ink);
+    margin-top: 1px;
+  }
+  .opt.single .box { border-radius: 50%; }
+  .opt.multi .box { border-radius: 5px; }
+  .opt .box::after { content: attr(data-letter); }
+  .opt input:checked + .box { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .opt .otext { flex: 1; padding-top: 2px; }
+  .opt .opt-verdict { display: none; margin-left: auto; align-self: center; }
+  body.submitted .opt { pointer-events: none; }
+  body.submitted .opt.chosen .opt-verdict { display: inline-grid; place-items: center; }
+
+  .mc-result, .pair-result {
+    display: none;
+    font-family: Inter, sans-serif; font-size: 12.5px;
+    margin: 6px 0 0 34px; padding: 7px 12px; border-radius: 7px;
+    align-items: center; gap: 8px;
+  }
+  .pair-result { margin-left: 0; }
+  body.submitted .mc-result, body.submitted .pair-result { display: inline-flex; }
+  .mc-result.ok, .pair-result.ok { background: var(--good-bg); color: var(--good); }
+  .mc-result.no, .pair-result.no { background: var(--bad-bg); color: var(--bad); }
+
+  /* Two-letter pair questions */
+  .pair-prompt { font-weight: 500; margin: 14px 0 10px; font-size: 17px; }
+
+  /* === Verdict marker === */
+  .verdict {
+    width: 22px; height: 22px; border-radius: 50%;
+    font-family: Inter, sans-serif; font-weight: 700; font-size: 12px;
+    text-align: center; line-height: 22px;
+  }
+  .verdict.ok { background: var(--good-bg); color: var(--good); }
+  .verdict.no { background: var(--bad-bg); color: var(--bad); }
+
+  /* === Highlighter === */
+  .hl {
+    background: linear-gradient(transparent 25%, var(--highlight) 25%, var(--highlight) 90%, transparent 90%);
+    padding: 0 1px; border-radius: 1px; cursor: pointer;
+  }
+  .hl:hover {
+    background: linear-gradient(transparent 25%, var(--highlight-deep) 25%, var(--highlight-deep) 90%, transparent 90%);
+  }
+  body.hl-mode { cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'><path d='M3 21l3.5-1L20 7.5 16.5 4 3 17.5z' fill='%23ffe78a' stroke='%23a07a00' stroke-width='1.2' stroke-linejoin='round'/></svg>") 2 22, text; }
+  .hl-hint {
+    position: fixed; bottom: 28px; left: 28px;
+    background: var(--ink); color: #fff;
+    font-family: Inter, sans-serif; font-size: 12.5px;
+    padding: 10px 14px; border-radius: 9px;
+    box-shadow: 0 8px 28px -10px rgba(0,0,0,.5);
+    z-index: 40; display: none; align-items: center; gap: 10px; max-width: 360px;
+  }
+  .hl-hint.show { display: inline-flex; }
+  .hl-hint .swatch { width: 14px; height: 14px; border-radius: 3px; background: var(--highlight); flex-shrink: 0; }
+
+  /* === Results modal === */
+  .modal-back {
+    position: fixed; inset: 0;
+    background: rgba(20,20,20,.45);
+    backdrop-filter: blur(4px);
+    z-index: 50; display: none;
+    align-items: center; justify-content: center; padding: 24px;
+  }
+  .modal-back.show { display: flex; }
+  .modal {
+    background: var(--paper); border: 1px solid var(--rule);
+    border-radius: 16px; max-width: 480px; width: 100%;
+    padding: 32px; box-shadow: 0 30px 80px -20px rgba(0,0,0,.5);
+    font-family: "Source Serif 4", serif; text-align: center;
+  }
+  .modal .eyebrow {
+    font-family: Inter, sans-serif;
+    font-size: 11px; letter-spacing: .22em; text-transform: uppercase;
+    color: var(--accent); font-weight: 700;
+  }
+  .modal h2 { margin: 8px 0 6px; font-size: 26px; font-weight: 600; }
+  .modal .score {
+    margin: 18px 0 8px;
+    font-size: 64px; font-weight: 600; line-height: 1;
+    color: var(--accent); font-variant-numeric: tabular-nums;
+  }
+  .modal .score small { font-size: 22px; color: var(--ink-soft); font-weight: 400; }
+  .modal .band {
+    font-family: Inter, sans-serif; font-size: 14px;
+    color: var(--ink-soft); margin-bottom: 18px;
+  }
+  .breakdown {
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px;
+    margin: 18px 0 22px;
+  }
+  .breakdown .cell {
+    font-family: Inter, sans-serif; font-size: 11px;
+    padding: 8px 4px; border-radius: 7px;
+    display: flex; flex-direction: column; align-items: center; gap: 2px;
+  }
+  .breakdown .cell .qn { font-weight: 600; font-size: 11px; color: var(--ink-soft); }
+  .breakdown .cell .v { font-size: 16px; font-weight: 700; }
+  .breakdown .cell.ok { background: var(--good-bg); color: var(--good); }
+  .breakdown .cell.no { background: var(--bad-bg); color: var(--bad); }
+  .modal .actions { display: flex; gap: 10px; justify-content: center; margin-top: 8px; }
+  .modal button {
+    font-family: Inter, sans-serif; font-size: 13px; font-weight: 600;
+    padding: 10px 18px; border-radius: 9px; cursor: pointer;
+  }
+  .modal .primary { background: var(--accent); color: #fff; border: 1px solid var(--accent); }
+  .modal .primary:hover { background: #18305b; }
+  .modal .ghost { background: transparent; color: var(--ink); border: 1px solid var(--rule); }
+  .modal .ghost:hover { background: #fff; }
+
+  ::selection { background: #ffe78a; }
+
+  /* === Student-info gate === */
+  .gate-overlay {
+    position: fixed; inset: 0;
+    background: rgba(20,20,20,.55);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 200; padding: 20px;
+  }
+  .gate-card {
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 16px;
+    padding: 32px 32px 28px;
+    max-width: 440px; width: 100%;
+    box-shadow: 0 24px 64px -16px rgba(20,20,20,.35);
+    font-family: "Source Serif 4", serif;
+  }
+  .gate-eyebrow {
+    font-family: Inter, sans-serif;
+    font-size: 11px; letter-spacing: .20em; text-transform: uppercase;
+    color: var(--accent); font-weight: 700; margin: 0 0 8px;
+  }
+  .gate-card h2 {
+    font-size: 24px; font-weight: 600; margin: 0 0 6px;
+    letter-spacing: -.01em; color: var(--ink);
+  }
+  .gate-sub {
+    font-family: Inter, sans-serif;
+    font-size: 14px; color: var(--ink-soft); margin: 0 0 22px;
+  }
+  .gate-field { margin-bottom: 14px; }
+  .gate-field label {
+    display: block;
+    font-family: Inter, sans-serif;
+    font-size: 11px; letter-spacing: .14em; text-transform: uppercase;
+    font-weight: 600; color: var(--ink-soft); margin-bottom: 6px;
+  }
+  .gate-field label .req { color: var(--bad); margin-left: 2px; }
+  .gate-field input {
+    width: 100%;
+    font-family: Inter, sans-serif; font-size: 15px;
+    color: var(--ink); background: #fff;
+    border: 1px solid var(--rule);
+    border-bottom: 2px solid var(--ink);
+    border-radius: 8px; padding: 9px 12px;
+    outline: none;
+    transition: border-color .15s, box-shadow .15s;
+    box-sizing: border-box;
+  }
+  .gate-field input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+  }
+  .gate-field input.gate-invalid {
+    border-color: var(--bad); background: var(--bad-bg);
+  }
+  .gate-error {
+    font-family: Inter, sans-serif;
+    font-size: 13px; color: var(--bad);
+    margin: 0 0 14px; min-height: 18px;
+  }
+  .gate-actions { display: flex; justify-content: flex-end; margin-top: 10px; }
+  /* Student badge in topbar */
+  .student-badge {
+    font-family: Inter, sans-serif;
+    font-size: 12px; line-height: 1.5;
+    color: var(--ink-soft); text-align: right;
+  }
+  .student-badge strong { color: var(--ink); display: block; }
+</style>
+</head>
+<body>
+
+<!-- Student-info gate -->
+<div class="gate-overlay" id="gate-overlay" role="dialog" aria-modal="true" aria-labelledby="gate-title">
+  <div class="gate-card">
+    <p class="gate-eyebrow">Before you begin</p>
+    <h2 id="gate-title">Student Information</h2>
+    <p class="gate-sub">Please enter your name and class to start the listening test.</p>
+    <div class="gate-field">
+      <label for="gate-name">Full Name<span class="req">*</span></label>
+      <input type="text" id="gate-name" autocomplete="name" spellcheck="false" placeholder="e.g. Nguyen Van A" />
+    </div>
+    <div class="gate-field">
+      <label for="gate-class">Class<span class="req">*</span></label>
+      <input type="text" id="gate-class" autocomplete="off" spellcheck="false" placeholder="e.g. 10A1" />
+    </div>
+    <p class="gate-error" id="gate-error"></p>
+    <div class="gate-actions">
+      <button class="submit-btn" id="gate-start" type="button">Start Test →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ====== Top bar ====== -->
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <span class="eyebrow">Listening · Part 3</span>
+      <span class="title">Foot Injuries · Questions 21–30</span>
+    </div>
+    <div class="spacer"></div>
+    <button class="tool-toggle" id="hlToggle" aria-pressed="false" title="Toggle highlighter (H)">
+      <span class="swatch" aria-hidden="true"></span>
+      <span>Highlighter</span>
+    </button>
+    <div class="timer" id="timer" role="timer" aria-live="polite">
+      <span class="dot"></span>
+      <span class="timer-num" id="timerNum">10:00</span>
+      <span class="timer-label">Remaining</span>
+    </div>
+    <button class="submit-btn" id="submitBtn">Submit answers</button>
+  </div>
+</div>
+
+<main>
+  <header class="doc-head">
+    <div class="kicker">Listening · Part 3 · Questions 21–30</div>
+    <h1>Foot Injuries</h1>
+    <p class="sub">Listen to the recording and answer questions 21 to 30.</p>
+  </header>
+
+  <!-- ====== Audio (sticky) ====== -->
+  <div class="audio-sticky">
+    <section class="audio-card" aria-label="Listening audio">
+      <div class="audio-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M11 5L6 9H3v6h3l5 4V5z"/>
+          <path d="M15.5 8.5a4 4 0 010 7"/>
+          <path d="M18.5 5.5a8 8 0 010 13"/>
+        </svg>
+      </div>
+      <div class="audio-meta">
+        <span class="label">Listening Track</span>
+        <span class="name">Part 3 — Foot Injuries</span>
+        <span class="hint">Press play once. The recording will play continuously.</span>
+      </div>
+      <div class="audio-frame-wrap">
+        <iframe
+          src="https://drive.google.com/file/d/1bMPKVFtBWehVbmTRhBH5fPKNG2GAT2mZ/preview"
+          allow="autoplay"
+          title="Foot Injuries audio">
+        </iframe>
+      </div>
+    </section>
+  </div>
+
+  <!-- ============== Q 21-26: Multiple choice ============== -->
+  <section class="qblock" data-group="21-26">
+    <div class="qhead">
+      <span class="qrange">Questions 21 — 26</span>
+      <span class="qcount">6 marks</span>
+    </div>
+    <p class="instruction">Choose the correct letter, <strong>A, B or C</strong>.</p>
+    <p class="topic">Presentation on foot injuries among sports players</p>
+
+    <div class="mc-q" data-single="21" data-correct="A">
+      <div class="mc-stem"><span class="mcnum">21</span><span>John and Cath’s presentation plans are different in</span></div>
+      <ul class="opts">
+        <li><label class="opt single"><input type="radio" name="q21" value="A" /><span class="box" data-letter="A"></span><span class="otext">the examples used.</span><span class="verdict opt-verdict"></span></label></li>
+        <li><label class="opt single"><input type="radio" name="q21" value="B" /><span class="box" data-letter="B"></span><span class="otext">the order of information.</span><span class="verdict opt-verdict"></span></label></li>
+        <li><label class="opt single"><input type="radio" name="q21" value="C" /><span class="box" data-letter="C"></span><span class="otext">the main points made.</span><span class="verdict opt-verdict"></span></label></li>
+      </ul>
+      <div class="mc-result"></div>
+    </div>
+
+    <div class="mc-q" data-single="22" data-correct="B">
+      <div class="mc-stem"><span class="mcnum">22</span><span>What do the students agree about the anatomy section of their presentation?</span></div>
+      <ul class="opts">
+        <li><label class="opt single"><input type="radio" name="q22" value="A" /><span class="box" data-letter="A"></span><span class="otext">It would be better if Cath spoke about it.</span><span class="verdict opt-verdict"></span></label></li>
+        <li><label class="opt single"><input type="radio" name="q22" value="B" /><span class="box" data-letter="B"></span><span class="otext">It should be kept quite short.</span><span class="verdict opt-verdict"></span></label></li>
+        <li><label class="opt single"><input type="radio" name="q22" value="C" /><span class="box" data-letter="C"></span><span class="otext">It should be based on information from the internet.</span><span class="verdict opt-verdict"></span></label></li>
+      </ul>
+      <div class="mc-result"></div>
+    </div>
+
+    <div class="mc-q" data-single="23" data-correct="B">
+      <div class="mc-stem"><span class="mcnum">23</span><span>What do the students agree to include in the last section?</span></div>
+      <ul class="opts">
+        <li><label class="opt single"><input type="radio" name="q23" value="A" /><span class="box" data-letter="A"></span><span class="otext">Visuals of injuries.</span><span class="verdict opt-verdict"></span></label></li>
+        <li><label class="opt single"><input type="radio" name="q23" value="B" /><span class="box" data-letter="B"></span><span class="otext">Demonstrations of treatment.</span><span class="verdict opt-verdict"></span></label></li>
+        <li><label class="opt single"><input type="radio" name="q23" value="C" /><span class="box" data-letter="C"></span><span class="otext">Interviews with patients.</span><span class="verdict opt-verdict"></span></label></li>
+      </ul>
+      <div class="mc-result"></div>
+    </div>
+
+    <div class="mc-q" data-single="24" data-correct="C">
+      <div class="mc-stem"><span class="mcnum">24</span><span>What is said about the different types of heel injury?</span></div>
+      <ul class="opts">
+        <li><label class="opt single"><input type="radio" name="q24" value="A" /><span class="box" data-letter="A"></span><span class="otext">Diagnosis is straightforward.</span><span class="verdict opt-verdict"></span></label></li>
+        <li><label class="opt single"><input type="radio" name="q24" value="B" /><span class="box" data-letter="B"></span><span class="otext">They are expensive to treat.</span><span class="verdict opt-verdict"></span></label></li>
+        <li><label class="opt single"><input type="radio" name="q24" value="C" /><span class="box" data-letter="C"></span><span class="otext">Some are more serious than others.</span><span class="verdict opt-verdict"></span></label></li>
+      </ul>
+      <div class="mc-result"></div>
+    </div>
+
+    <div class="mc-q" data-single="25" data-correct="A">
+      <div class="mc-stem"><span class="mcnum">25</span><span>On the subject of causes of heel injuries, the students agree to</span></div>
+      <ul class="opts">
+        <li><label class="opt single"><input type="radio" name="q25" value="A" /><span class="box" data-letter="A"></span><span class="otext">focus on a single reason.</span><span class="verdict opt-verdict"></span></label></li>
+        <li><label class="opt single"><input type="radio" name="q25" value="B" /><span class="box" data-letter="B"></span><span class="otext">reject certain approaches.</span><span class="verdict opt-verdict"></span></label></li>
+        <li><label class="opt single"><input type="radio" name="q25" value="C" /><span class="box" data-letter="C"></span><span class="otext">use a source written by their professor.</span><span class="verdict opt-verdict"></span></label></li>
+      </ul>
+      <div class="mc-result"></div>
+    </div>
+
+    <div class="mc-q" data-single="26" data-correct="A">
+      <div class="mc-stem"><span class="mcnum">26</span><span>What does Cath say about stretching as a treatment?</span></div>
+      <ul class="opts">
+        <li><label class="opt single"><input type="radio" name="q26" value="A" /><span class="box" data-letter="A"></span><span class="otext">It is potentially risky.</span><span class="verdict opt-verdict"></span></label></li>
+        <li><label class="opt single"><input type="radio" name="q26" value="B" /><span class="box" data-letter="B"></span><span class="otext">It is commonly confused with strengthening.</span><span class="verdict opt-verdict"></span></label></li>
+        <li><label class="opt single"><input type="radio" name="q26" value="C" /><span class="box" data-letter="C"></span><span class="otext">It is the least effective part of treatment.</span><span class="verdict opt-verdict"></span></label></li>
+      </ul>
+      <div class="mc-result"></div>
+    </div>
+  </section>
+
+  <!-- ============== Q 27 and 28 ============== -->
+  <section class="qblock" data-group="27-28">
+    <div class="qhead">
+      <span class="qrange">Questions 27 and 28</span>
+      <span class="qcount">2 marks</span>
+    </div>
+    <p class="instruction">Choose <strong>TWO</strong> letters, A–E.</p>
+    <p class="pair-prompt">Which TWO treatment techniques did the female runner find useful for her swollen heel?</p>
+    <ul class="opts nopad" data-pair="27-28" data-multi="2" data-correct="A,C">
+      <li><label class="opt multi"><input type="checkbox" value="A" /><span class="box" data-letter="A"></span><span class="otext">massage</span><span class="verdict opt-verdict"></span></label></li>
+      <li><label class="opt multi"><input type="checkbox" value="B" /><span class="box" data-letter="B"></span><span class="otext">ultrasound</span><span class="verdict opt-verdict"></span></label></li>
+      <li><label class="opt multi"><input type="checkbox" value="C" /><span class="box" data-letter="C"></span><span class="otext">rest</span><span class="verdict opt-verdict"></span></label></li>
+      <li><label class="opt multi"><input type="checkbox" value="D" /><span class="box" data-letter="D"></span><span class="otext">balancing exercises</span><span class="verdict opt-verdict"></span></label></li>
+      <li><label class="opt multi"><input type="checkbox" value="E" /><span class="box" data-letter="E"></span><span class="otext">ice</span><span class="verdict opt-verdict"></span></label></li>
+    </ul>
+    <div class="pair-result" data-result-for="27-28"></div>
+  </section>
+
+  <!-- ============== Q 29 and 30 ============== -->
+  <section class="qblock" data-group="29-30">
+    <div class="qhead">
+      <span class="qrange">Questions 29 and 30</span>
+      <span class="qcount">2 marks</span>
+    </div>
+    <p class="instruction">Choose <strong>TWO</strong> letters, A–E.</p>
+    <p class="pair-prompt">Which TWO sports did the male sprinter find most effective during his rehabilitation programme?</p>
+    <ul class="opts nopad" data-pair="29-30" data-multi="2" data-correct="B,D">
+      <li><label class="opt multi"><input type="checkbox" value="A" /><span class="box" data-letter="A"></span><span class="otext">swimming</span><span class="verdict opt-verdict"></span></label></li>
+      <li><label class="opt multi"><input type="checkbox" value="B" /><span class="box" data-letter="B"></span><span class="otext">weight-training</span><span class="verdict opt-verdict"></span></label></li>
+      <li><label class="opt multi"><input type="checkbox" value="C" /><span class="box" data-letter="C"></span><span class="otext">running on grass</span><span class="verdict opt-verdict"></span></label></li>
+      <li><label class="opt multi"><input type="checkbox" value="D" /><span class="box" data-letter="D"></span><span class="otext">cycling</span><span class="verdict opt-verdict"></span></label></li>
+      <li><label class="opt multi"><input type="checkbox" value="E" /><span class="box" data-letter="E"></span><span class="otext">jumping</span><span class="verdict opt-verdict"></span></label></li>
+    </ul>
+    <div class="pair-result" data-result-for="29-30"></div>
+  </section>
+</main>
+
+<!-- floating highlight hint -->
+<div class="hl-hint" id="hlHint">
+  <span class="swatch"></span>
+  <span><strong>Highlighter on.</strong> Select any text in a question to highlight it. Click a highlight to remove.</span>
+</div>
+
+<!-- ====== Results modal ====== -->
+<div class="modal-back" id="modalBack" role="dialog" aria-modal="true" aria-labelledby="resultTitle">
+  <div class="modal">
+    <span class="eyebrow">Result</span>
+    <h2 id="resultTitle">Test submitted</h2>
+    <div class="score"><span id="scoreNum">0</span><small> / 10</small></div>
+    <div class="band" id="scoreBand">—</div>
+    <div class="breakdown" id="breakdown"></div>
+    <div class="actions">
+      <button class="ghost" id="reviewBtn">Review my paper</button>
+      <button class="primary" id="retryBtn">Try again</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ======================================================================
+   1) Timer (10:00 countdown)
+   ====================================================================== */
+const DURATION = 10 * 60;
+let remaining = DURATION;
+let timerHandle = null;
+const timerEl = document.getElementById('timer');
+const timerNumEl = document.getElementById('timerNum');
+
+function fmt(s) {
+  const m = Math.floor(s/60), r = s%60;
+  return String(m).padStart(2,'0') + ':' + String(r).padStart(2,'0');
+}
+function tick() {
+  remaining -= 1;
+  if (remaining <= 0) {
+    remaining = 0;
+    timerNumEl.textContent = '00:00';
+    clearInterval(timerHandle); timerHandle = null;
+    submitTest(true);
+    return;
+  }
+  timerNumEl.textContent = fmt(remaining);
+  timerEl.classList.toggle('warn', remaining <= 120 && remaining > 30);
+  timerEl.classList.toggle('danger', remaining <= 30);
+}
+function startTimer() { if (!timerHandle) timerHandle = setInterval(tick, 1000); }
+function stopTimer() { clearInterval(timerHandle); timerHandle = null; }
+let started = false;
+function maybeStart() { if (started) return; started = true; startTimer(); }
+window.addEventListener('click', maybeStart, { once: true });
+window.addEventListener('keydown', maybeStart, { once: true });
+
+/* ======================================================================
+   2) Multi-select cap (pairs)
+   ====================================================================== */
+document.querySelectorAll('.opts[data-multi]').forEach(list => {
+  const cap = parseInt(list.dataset.multi, 10);
+  list.addEventListener('change', e => {
+    if (e.target.matches('input[type=checkbox]')) {
+      const checked = list.querySelectorAll('input:checked');
+      if (checked.length > cap) {
+        for (const c of checked) { if (c !== e.target) { c.checked = false; break; } }
+      }
+    }
+  });
+});
+
+/* ======================================================================
+   3) Reflect chosen state on single-choice options
+   ====================================================================== */
+document.querySelectorAll('.mc-q .opts').forEach(list => {
+  list.addEventListener('change', () => {
+    list.querySelectorAll('.opt').forEach(o => o.classList.toggle('chosen', o.querySelector('input').checked));
+  });
+});
+
+/* ======================================================================
+   4) Highlighter
+   ====================================================================== */
+const HL_ZONES = '.qblock';
+const hlToggle = document.getElementById('hlToggle');
+const hlHint = document.getElementById('hlHint');
+let hlMode = false;
+function setHlMode(on) {
+  hlMode = on;
+  document.body.classList.toggle('hl-mode', on);
+  hlToggle.classList.toggle('active', on);
+  hlToggle.setAttribute('aria-pressed', on ? 'true' : 'false');
+  hlHint.classList.toggle('show', on);
+}
+hlToggle.addEventListener('click', () => setHlMode(!hlMode));
+document.addEventListener('keydown', e => {
+  if (e.key && e.key.toLowerCase() === 'h' && !e.target.matches('input, select, textarea')) setHlMode(!hlMode);
+});
+document.addEventListener('mouseup', () => {
+  if (!hlMode) return;
+  const sel = window.getSelection();
+  if (!sel || sel.isCollapsed) return;
+  const range = sel.getRangeAt(0);
+  if (range.collapsed) return;
+  const container = range.commonAncestorContainer;
+  const host = (container.nodeType === 1 ? container : container.parentElement).closest(HL_ZONES);
+  if (!host) return;
+  if (range.startContainer.parentElement && range.startContainer.parentElement.closest('input,select,button,img,iframe')) return;
+  try { wrapRangeWithHighlight(range); sel.removeAllRanges(); } catch (_) {}
+});
+document.addEventListener('click', e => {
+  const hl = e.target.closest('.hl');
+  if (!hl) return;
+  const parent = hl.parentNode;
+  while (hl.firstChild) parent.insertBefore(hl.firstChild, hl);
+  parent.removeChild(hl);
+  parent.normalize();
+});
+function wrapRangeWithHighlight(range) {
+  const root = range.commonAncestorContainer;
+  const rootEl = root.nodeType === 1 ? root : root.parentElement;
+  const walker = document.createTreeWalker(rootEl, NodeFilter.SHOW_TEXT, {
+    acceptNode(node) {
+      if (!range.intersectsNode(node)) return NodeFilter.FILTER_REJECT;
+      if (node.parentElement.closest('input,select,button,iframe,.box,.mcnum,.verdict')) return NodeFilter.FILTER_REJECT;
+      return NodeFilter.FILTER_ACCEPT;
+    }
+  });
+  const nodes = []; let n;
+  while ((n = walker.nextNode())) nodes.push(n);
+  nodes.forEach(node => {
+    if (!node.nodeValue || !node.nodeValue.trim()) return;
+    let start = 0, end = node.nodeValue.length;
+    if (node === range.startContainer) start = range.startOffset;
+    if (node === range.endContainer) end = range.endOffset;
+    if (end <= start) return;
+    const before = node.nodeValue.slice(0, start);
+    const middle = node.nodeValue.slice(start, end);
+    const after = node.nodeValue.slice(end);
+    if (!middle.trim()) return;
+    const parent = node.parentNode;
+    const frag = document.createDocumentFragment();
+    if (before) frag.appendChild(document.createTextNode(before));
+    const span = document.createElement('span');
+    span.className = 'hl'; span.textContent = middle;
+    frag.appendChild(span);
+    if (after) frag.appendChild(document.createTextNode(after));
+    parent.replaceChild(frag, node);
+  });
+}
+
+/* ======================================================================
+   5) Submit + scoring
+   ====================================================================== */
+const submitBtn = document.getElementById('submitBtn');
+const modalBack = document.getElementById('modalBack');
+const scoreNum = document.getElementById('scoreNum');
+const scoreBand = document.getElementById('scoreBand');
+const breakdownEl = document.getElementById('breakdown');
+const reviewBtn = document.getElementById('reviewBtn');
+const retryBtn = document.getElementById('retryBtn');
+
+submitBtn.addEventListener('click', () => submitTest(false));
+
+function submitTest(forced) {
+  if (document.body.classList.contains('submitted')) return;
+  if (!forced) {
+    const unanswered = countUnanswered();
+    if (unanswered > 0) {
+      const msg = unanswered === 1
+        ? "There is 1 question unanswered. Submit anyway?"
+        : "There are " + unanswered + " questions unanswered. Submit anyway?";
+      if (!confirm(msg)) return;
+    }
+  }
+  stopTimer();
+  document.body.classList.add('submitted');
+
+  const perQ = {};
+  let total = 0;
+
+  // --- Single choice (21-26) ---
+  document.querySelectorAll('.mc-q[data-single]').forEach(block => {
+    const q = parseInt(block.dataset.single, 10);
+    const chosen = block.querySelector('input:checked');
+    const ok = chosen && chosen.value === block.dataset.correct;
+    perQ[q] = !!ok;
+    if (ok) total += 1;
+    block.querySelectorAll('.opt').forEach(o => {
+      const inp = o.querySelector('input');
+      if (inp.checked) {
+        o.classList.add('chosen');
+        const v = o.querySelector('.opt-verdict');
+        const good = inp.value === block.dataset.correct;
+        v.classList.add(good ? 'ok' : 'no'); v.textContent = good ? '✓' : '✗';
+      }
+    });
+    const res = block.querySelector('.mc-result');
+    if (ok) { res.classList.add('ok'); res.innerHTML = '<strong>✓ Correct</strong>'; }
+    else { res.classList.add('no'); res.innerHTML = chosen ? '<strong>✗ Incorrect</strong>' : '<strong>✗ No answer selected</strong>'; }
+  });
+
+  // --- Two-letter pairs (27-28, 29-30) ---
+  document.querySelectorAll('.opts[data-pair]').forEach(list => {
+    const pair = list.dataset.pair;
+    const [qa, qb] = pair.split('-').map(Number);
+    const correctSet = new Set(list.dataset.correct.split(','));
+    const chosen = [...list.querySelectorAll('input:checked')].map(i => i.value);
+    const matches = chosen.filter(c => correctSet.has(c)).length;
+    perQ[qa] = matches >= 1;
+    perQ[qb] = matches >= 2;
+    if (perQ[qa]) total += 1;
+    if (perQ[qb]) total += 1;
+    list.querySelectorAll('.opt').forEach(o => {
+      const inp = o.querySelector('input');
+      if (inp.checked) {
+        o.classList.add('chosen');
+        const v = o.querySelector('.opt-verdict');
+        const good = correctSet.has(inp.value);
+        v.classList.add(good ? 'ok' : 'no'); v.textContent = good ? '✓' : '✗';
+      }
+    });
+    const res = document.querySelector('.pair-result[data-result-for="' + pair + '"]');
+    if (matches === 2) { res.classList.add('ok'); res.innerHTML = '<strong>✓ 2/2 correct</strong> · Both selections are right.'; }
+    else if (matches === 1) { res.classList.add('no'); res.innerHTML = '<strong>✗ 1/2 correct</strong> · One selection is right.'; }
+    else { res.classList.add('no'); res.innerHTML = '<strong>✗ 0/2 correct</strong>'; }
+  });
+
+  scoreNum.textContent = total;
+  scoreBand.textContent = bandFor(total);
+
+  breakdownEl.innerHTML = '';
+  for (let q = 21; q <= 30; q++) {
+    const cell = document.createElement('div');
+    cell.className = 'cell ' + (perQ[q] ? 'ok' : 'no');
+    cell.innerHTML = '<span class="qn">Q' + q + '</span><span class="v">' + (perQ[q] ? '✓' : '✗') + '</span>';
+    breakdownEl.appendChild(cell);
+  }
+  modalBack.classList.add('show');
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Submitted';
+}
+
+function countUnanswered() {
+  let n = 0;
+  document.querySelectorAll('.mc-q[data-single]').forEach(b => { if (!b.querySelector('input:checked')) n++; });
+  document.querySelectorAll('.opts[data-pair]').forEach(list => {
+    const c = list.querySelectorAll('input:checked').length;
+    n += Math.max(0, 2 - c);
+  });
+  return n;
+}
+
+function bandFor(score) {
+  if (score === 10) return 'Outstanding — full marks on Part 3.';
+  if (score >= 8) return 'Strong performance — review the missed items.';
+  if (score >= 6) return 'Solid pass — keep practising the listening details.';
+  if (score >= 4) return 'Getting there — focus on the details.';
+  return 'Keep going — listen again and try once more.';
+}
+
+reviewBtn.addEventListener('click', () => modalBack.classList.remove('show'));
+retryBtn.addEventListener('click', () => location.reload());
+modalBack.addEventListener('click', e => { if (e.target === modalBack) modalBack.classList.remove('show'); });
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) submitTest(false);
+});
+
+/* ======================================================================
+   GATE — Student name/class required before test starts
+   ====================================================================== */
+const GOOGLE_FORM = {
+  formId:  '1FAIpQLScDXVyiXO5AO5lWGMLLT3lLlO0Q55C9dSiUD9ZGjQH6yaoxDg',
+  fields: {
+    name:    'entry.1613415965',
+    klass:   'entry.1542159183',
+    answers: 'entry.231371072',
+    score:   'entry.1459906322',
+  },
+};
+
+const student = { name: '', klass: '' };
+
+const gateOverlay = document.getElementById('gate-overlay');
+const gateName    = document.getElementById('gate-name');
+const gateClass   = document.getElementById('gate-class');
+const gateError   = document.getElementById('gate-error');
+const gateStart   = document.getElementById('gate-start');
+
+function startTest() {
+  const nameVal  = gateName.value.trim();
+  const classVal = gateClass.value.trim();
+  gateName.classList.toggle('gate-invalid', !nameVal);
+  gateClass.classList.toggle('gate-invalid', !classVal);
+  if (!nameVal || !classVal) {
+    gateError.textContent = 'Please enter both your name and class.';
+    (nameVal ? gateClass : gateName).focus();
+    return;
+  }
+  student.name  = nameVal;
+  student.klass = classVal;
+  gateError.textContent = '';
+  gateOverlay.style.display = 'none';
+
+  // Inject student badge into topbar
+  const spacer = document.querySelector('.topbar-inner .spacer');
+  if (spacer) {
+    const badge = document.createElement('div');
+    badge.className = 'student-badge';
+    badge.innerHTML = '<strong></strong><span></span>';
+    badge.querySelector('strong').textContent = student.name;
+    badge.querySelector('span').textContent   = 'Class: ' + student.klass;
+    spacer.parentNode.insertBefore(badge, spacer);
+  }
+
+  // Trigger timer start (gate dismissal counts as first interaction)
+  maybeStart();
+}
+
+gateStart.addEventListener('click', startTest);
+[gateName, gateClass].forEach(el => {
+  el.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); startTest(); } });
+  el.addEventListener('input',   () => { el.classList.remove('gate-invalid'); gateError.textContent = ''; });
+});
+setTimeout(() => gateName.focus(), 60);
+
+/* ======================================================================
+   GOOGLE FORM SUBMISSION — fires once when submitTest() completes
+   ====================================================================== */
+let hasSubmitted = false;
+
+function collectAnswersTranscript() {
+  const lines = [];
+
+  // Q21-26 single choice
+  document.querySelectorAll('.mc-q[data-single]').forEach(block => {
+    const q      = block.dataset.single;
+    const chosen = block.querySelector('input:checked');
+    const val    = chosen ? chosen.value : '(blank)';
+    const ok     = chosen && chosen.value === block.dataset.correct;
+    lines.push(String(q).padStart(2,'0') + '. [' + (ok ? '\u2713' : '\u2715') + '] Q' + q + ': ' + val);
+  });
+
+  // Q27-28 and Q29-30 two-letter pairs
+  document.querySelectorAll('.opts[data-pair]').forEach(list => {
+    const pair       = list.dataset.pair;
+    const [qa, qb]   = pair.split('-');
+    const correctSet = new Set(list.dataset.correct.split(','));
+    const chosen     = [...list.querySelectorAll('input:checked')].map(i => i.value);
+    const chosenStr  = chosen.length ? chosen.join(', ') : '(blank)';
+    const matches    = chosen.filter(c => correctSet.has(c)).length;
+    lines.push(qa + '-' + qb + '. [' + matches + '/2 \u2713] Q' + qa + '-' + qb + ': ' + chosenStr);
+  });
+
+  return lines.join('\n');
+}
+
+function submitToGoogleForm(score) {
+  if (hasSubmitted) return;
+  hasSubmitted = true;
+
+  const url = 'https://docs.google.com/forms/d/e/' + GOOGLE_FORM.formId + '/formResponse';
+  const payload = {
+    [GOOGLE_FORM.fields.name]:    student.name,
+    [GOOGLE_FORM.fields.klass]:   student.klass,
+    [GOOGLE_FORM.fields.answers]: collectAnswersTranscript(),
+    [GOOGLE_FORM.fields.score]:   score + ' / 10',
+  };
+
+  let iframe = document.getElementById('gf-sink');
+  if (!iframe) {
+    iframe = document.createElement('iframe');
+    iframe.name = 'gf-sink'; iframe.id = 'gf-sink';
+    iframe.style.display = 'none';
+    document.body.appendChild(iframe);
+  }
+  const form = document.createElement('form');
+  form.action = url; form.method = 'POST'; form.target = 'gf-sink';
+  form.style.display = 'none';
+  Object.entries(payload).forEach(function([k, v]) {
+    const inp = document.createElement('input');
+    inp.type = 'hidden'; inp.name = k; inp.value = v;
+    form.appendChild(inp);
+  });
+  document.body.appendChild(form);
+  form.submit();
+  setTimeout(() => form.remove(), 2000);
+}
+
+// Patch submitTest to trigger Google Form after scoring
+const _origSubmitTest = submitTest;
+window.submitTest = function(forced) {
+  _origSubmitTest(forced);
+  setTimeout(() => {
+    const score = parseInt(document.getElementById('scoreNum').textContent) || 0;
+    submitToGoogleForm(score);
+  }, 80);
+};
+
+</script>
+</body>
+</html>
