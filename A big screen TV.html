@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unit 17 — A Big Screen TV</title>
+<style>
+  :root{
+    --ink:#1c2733;
+    --ink-soft:#4a5866;
+    --paper:#f3f5f7;
+    --card:#ffffff;
+    --line:#d9e0e6;
+    --amber:#e07b26;
+    --amber-soft:#fbe9d6;
+    --teal:#1f7a72;
+    --screen-bg:#10201d;
+    --screen-glow:#7fe3c4;
+    --shadow:0 1px 2px rgba(28,39,51,.06),0 8px 24px rgba(28,39,51,.06);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:17px;
+    line-height:1.6;
+    -webkit-text-size-adjust:100%;
+  }
+  .wrap{max-width:820px;margin:0 auto;padding:0 18px 80px;}
+
+  /* ---- Masthead ---- */
+  header.masthead{
+    max-width:820px;margin:0 auto;padding:34px 18px 14px;
+  }
+  .unit-tag{
+    display:inline-block;
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+    color:#fff;background:var(--amber);
+    padding:5px 12px;border-radius:4px;
+  }
+  h1.title{
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    font-weight:800;font-size:34px;line-height:1.1;letter-spacing:-.01em;
+    margin:12px 0 4px;
+  }
+  .subtitle{color:var(--ink-soft);font-style:italic;margin:0;}
+
+  /* ---- Progress: on-screen display ---- */
+  .tracker{
+    position:sticky;top:0;z-index:20;
+    background:var(--paper);
+    padding:12px 18px;margin-bottom:6px;
+    border-bottom:1px solid var(--line);
+  }
+  .tracker-inner{
+    max-width:784px;margin:0 auto;
+    display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+  }
+  .screen{
+    background:var(--screen-bg);
+    color:var(--screen-glow);
+    font-family:"SFMono-Regular",ui-monospace,Menlo,Consolas,monospace;
+    border-radius:8px;
+    padding:9px 14px;
+    display:flex;align-items:baseline;gap:8px;
+    box-shadow:inset 0 0 0 1px rgba(127,227,196,.25),inset 0 0 22px rgba(127,227,196,.12);
+    text-shadow:0 0 8px rgba(127,227,196,.45);
+    white-space:nowrap;
+  }
+  .screen .label{font-size:10px;letter-spacing:.22em;opacity:.7;text-transform:uppercase;}
+  .screen .count{font-size:22px;font-weight:700;letter-spacing:.03em;}
+  .screen .of{opacity:.55;font-size:15px;}
+  .bar-area{flex:1;min-width:180px;}
+  .bar-top{
+    display:flex;justify-content:space-between;
+    font-family:system-ui,sans-serif;font-size:12px;color:var(--ink-soft);
+    margin-bottom:5px;
+  }
+  .bar-top strong{color:var(--teal);font-weight:700;}
+  .bar{height:9px;border-radius:6px;background:#e4e9ee;overflow:hidden;}
+  .bar>span{
+    display:block;height:100%;width:0%;
+    background:linear-gradient(90deg,var(--teal),var(--screen-glow));
+    transition:width .28s ease;
+  }
+  .reset{
+    font-family:system-ui,sans-serif;font-size:13px;font-weight:600;
+    color:var(--ink-soft);background:#fff;
+    border:1px solid var(--line);border-radius:7px;
+    padding:8px 13px;cursor:pointer;
+  }
+  .reset:hover{border-color:var(--amber);color:var(--amber);}
+
+  /* ---- Sections ---- */
+  section.block{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:22px 24px;
+    margin-top:20px;
+    box-shadow:var(--shadow);
+  }
+  .block-head{
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    display:flex;align-items:center;gap:11px;
+    margin:0 0 4px;
+  }
+  .letter{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:30px;height:30px;border-radius:50%;
+    background:var(--amber);color:#fff;font-weight:800;font-size:16px;flex:none;
+  }
+  .block-head h2{font-size:21px;font-weight:800;margin:0;letter-spacing:-.01em;}
+  .track{
+    font-family:system-ui,sans-serif;font-size:11px;font-weight:700;
+    letter-spacing:.05em;color:var(--teal);
+    background:#e3f2ef;border-radius:20px;padding:3px 10px;margin-left:auto;
+    white-space:nowrap;
+  }
+  .instruction{
+    font-family:system-ui,sans-serif;font-weight:700;font-size:14.5px;
+    color:var(--ink);margin:4px 0 16px;
+  }
+
+  /* word box */
+  .wordbox{
+    display:flex;flex-wrap:wrap;gap:8px;
+    background:var(--amber-soft);border:1px dashed #f0b47f;border-radius:10px;
+    padding:12px 14px;margin:0 0 18px;
+  }
+  .wordbox .wb-label{
+    width:100%;font-family:system-ui,sans-serif;font-size:11px;font-weight:700;
+    letter-spacing:.14em;text-transform:uppercase;color:#b8651e;margin-bottom:2px;
+  }
+  .chip{
+    background:#fff;border:1px solid #f0c39a;border-radius:6px;
+    padding:4px 12px;font-family:system-ui,sans-serif;font-size:14px;color:#8a4a12;
+  }
+
+  ol.qlist{margin:0;padding-left:26px;}
+  ol.qlist>li{margin:0 0 12px;padding-left:4px;}
+  ol.qlist>li::marker{font-weight:700;color:var(--ink-soft);}
+
+  /* blanks */
+  input.blank{
+    font-family:Georgia,serif;font-size:16px;color:var(--teal);
+    border:none;border-bottom:2px solid #b9c4cd;
+    background:transparent;padding:1px 4px;margin:0 2px;
+    min-width:70px;width:130px;text-align:center;
+    transition:border-color .15s;
+  }
+  input.blank:focus{outline:none;border-bottom-color:var(--amber);}
+  input.blank.filled{border-bottom-color:var(--teal);color:var(--teal);font-weight:600;}
+  input.short{width:80px;min-width:52px;}
+  input.tiny{width:56px;min-width:44px;}
+  input.long{width:180px;}
+
+  /* MCQ */
+  .mcq{list-style:none;margin:8px 0 0;padding:0;}
+  .mcq li{margin:0 0 7px;}
+  .opt{
+    display:flex;align-items:flex-start;gap:10px;cursor:pointer;
+    border:1px solid var(--line);border-radius:9px;padding:9px 13px;
+    transition:border-color .15s,background .15s;
+  }
+  .opt:hover{border-color:#c7d0d8;background:#fafbfc;}
+  .opt input{margin:4px 0 0;accent-color:var(--amber);flex:none;}
+  .opt .tag{font-weight:700;color:var(--ink-soft);}
+  .opt.checked{border-color:var(--amber);background:var(--amber-soft);}
+  .opt.checked .tag{color:var(--amber);}
+
+  /* ordering */
+  .order li{
+    display:flex;align-items:center;gap:12px;margin:0 0 10px;
+    border-bottom:1px dotted var(--line);padding-bottom:8px;
+  }
+  input.ord{
+    font-family:system-ui,sans-serif;font-weight:700;font-size:16px;
+    width:46px;height:40px;text-align:center;color:var(--teal);
+    border:1px solid var(--line);border-radius:8px;background:#fbfcfd;flex:none;
+  }
+  input.ord:focus{outline:none;border-color:var(--amber);}
+  input.ord.filled{border-color:var(--teal);background:#eef7f5;}
+
+  /* dialog */
+  .dialog{
+    background:#fcfaf6;border:1px solid #ece3d5;border-radius:10px;
+    padding:18px 20px;
+  }
+  .turn{display:flex;gap:12px;margin:0 0 16px;line-height:2.1;}
+  .turn:last-child{margin-bottom:0;}
+  .who{
+    font-family:system-ui,sans-serif;font-weight:800;color:var(--amber);
+    flex:none;width:26px;padding-top:1px;
+  }
+  .say{flex:1;}
+
+  .hint{
+    font-family:system-ui,sans-serif;font-size:13px;color:var(--ink-soft);
+    background:#eef2f5;border-left:3px solid var(--teal);border-radius:0 8px 8px 0;
+    padding:9px 13px;margin:0 0 16px;
+  }
+  footer{
+    text-align:center;font-family:system-ui,sans-serif;font-size:13px;
+    color:var(--ink-soft);margin-top:34px;
+  }
+  @media (max-width:560px){
+    body{font-size:16px;}
+    section.block{padding:18px 15px;}
+    .screen .count{font-size:19px;}
+    input.blank{width:100px;}
+  }
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <span class="unit-tag">Unit 17</span>
+  <h1 class="title">A Big Screen TV</h1>
+  <p class="subtitle">Listening &amp; Dictation worksheet</p>
+</header>
+
+<div class="tracker">
+  <div class="tracker-inner">
+    <div class="screen">
+      <span class="label">Attempted</span>
+      <span class="count" id="count">0</span>
+      <span class="of">/ <span id="total">0</span></span>
+    </div>
+    <div class="bar-area">
+      <div class="bar-top"><span>Progress</span><span><strong id="pct">0%</strong></span></div>
+      <div class="bar"><span id="fill"></span></div>
+    </div>
+    <button class="reset" id="reset" type="button">Reset</button>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- A -->
+  <section class="block">
+    <div class="block-head">
+      <span class="letter">A</span>
+      <h2>New Words</h2>
+    </div>
+    <p class="instruction">Fill in the blanks.</p>
+    <div class="wordbox">
+      <span class="wb-label">Word box</span>
+      <span class="chip">screen</span>
+      <span class="chip">enjoy</span>
+      <span class="chip">never</span>
+      <span class="chip">quality</span>
+      <span class="chip">afford</span>
+      <span class="chip">living room</span>
+    </div>
+    <ol class="qlist">
+      <li>This computer has a 24-inch <input class="blank q" type="text">.</li>
+      <li>We always watch television in our <input class="blank q" type="text">.</li>
+      <li>He cannot <input class="blank q" type="text"> to buy a car this year.</li>
+      <li>I have <input class="blank q" type="text"> been to Australia.</li>
+      <li>I <input class="blank q" type="text"> reading storybooks.</li>
+      <li>The <input class="blank q" type="text"> of this photo is better than that one.</li>
+    </ol>
+  </section>
+
+  <!-- B -->
+  <section class="block">
+    <div class="block-head">
+      <span class="letter">B</span>
+      <h2>Understanding the Context</h2>
+      <span class="track">Track 17</span>
+    </div>
+    <p class="instruction">Listen and answer the questions.</p>
+    <ol class="qlist">
+      <li>What is NOT true about the TV the man wants to buy?
+        <ul class="mcq qgroup" data-q>
+          <li><label class="opt"><input type="radio" name="b1"><span class="tag">(a)</span><span>It is a big screen TV.</span></label></li>
+          <li><label class="opt"><input type="radio" name="b1"><span class="tag">(b)</span><span>It is only sold online.</span></label></li>
+          <li><label class="opt"><input type="radio" name="b1"><span class="tag">(c)</span><span>It costs a lot of money.</span></label></li>
+          <li><label class="opt"><input type="radio" name="b1"><span class="tag">(d)</span><span>The picture quality is great.</span></label></li>
+        </ul>
+      </li>
+      <li>What will the man have to do before he can get the TV?
+        <ul class="mcq qgroup" data-q>
+          <li><label class="opt"><input type="radio" name="b2"><span class="tag">(a)</span><span>Save some money for a few months</span></label></li>
+          <li><label class="opt"><input type="radio" name="b2"><span class="tag">(b)</span><span>Get his friend to lend him some money</span></label></li>
+          <li><label class="opt"><input type="radio" name="b2"><span class="tag">(c)</span><span>Clear a space in his living room</span></label></li>
+          <li><label class="opt"><input type="radio" name="b2"><span class="tag">(d)</span><span>Wait for the TV to go on sale</span></label></li>
+        </ul>
+      </li>
+    </ol>
+  </section>
+
+  <!-- C -->
+  <section class="block">
+    <div class="block-head">
+      <span class="letter">C</span>
+      <h2>Focus on Details</h2>
+      <span class="track">Track 17</span>
+    </div>
+    <p class="instruction">Listen and write the missing words.</p>
+    <ol class="qlist">
+      <li>I'm thinking about buying a big <input class="blank q" type="text"> TV.</li>
+      <li>Do you think the <input class="blank q" type="text"> of the picture is good?</li>
+      <li>Then, I can <input class="blank q" type="text"> watching TV on the big screen with you!</li>
+      <li>It will be a few months before I can <input class="blank q" type="text"> to buy it.</li>
+    </ol>
+  </section>
+
+  <!-- D -->
+  <section class="block">
+    <div class="block-head">
+      <span class="letter">D</span>
+      <h2>Summary</h2>
+      <span class="track">Track 17</span>
+    </div>
+    <p class="instruction">Listen and order the sentences from 1-5.</p>
+    <ul class="order" style="list-style:none;padding:0;margin:0;">
+      <li><input class="ord q" type="text" inputmode="numeric" maxlength="1"><span>The man wants to buy a big screen TV.</span></li>
+      <li><input class="ord q" type="text" inputmode="numeric" maxlength="1"><span>It will be a few months before the man can buy the TV.</span></li>
+      <li><input class="ord q" type="text" inputmode="numeric" maxlength="1"><span>A big screen TV costs a lot of money.</span></li>
+      <li><input class="ord q" type="text" inputmode="numeric" maxlength="1"><span>The woman wants to enjoy the big screen TV, too.</span></li>
+      <li><input class="ord q" type="text" inputmode="numeric" maxlength="1"><span>The man enjoys watching TV on a big screen.</span></li>
+    </ul>
+  </section>
+
+  <!-- E -->
+  <section class="block">
+    <div class="block-head">
+      <span class="letter">E</span>
+      <h2>Dictation</h2>
+      <span class="track">Track 17</span>
+    </div>
+    <p class="instruction">Listen and complete the dialog.</p>
+    <div class="hint">Each line follows Track 17. Type one word (or short phrase) in every blank.</div>
+
+    <div class="dialog">
+      <div class="turn">
+        <span class="who">M:</span>
+        <span class="say">I'm <input class="blank q" type="text"> about <input class="blank q" type="text"> a <input class="blank q short" type="text"> <input class="blank q short" type="text"> TV.</span>
+      </div>
+
+      <div class="turn">
+        <span class="who">W:</span>
+        <span class="say">Wow! I've <input class="blank q" type="text"> those <input class="blank q short" type="text"> <input class="blank q short" type="text"> store. They cost <input class="blank q tiny" type="text"> <input class="blank q short" type="text"> of <input class="blank q" type="text">. Can <input class="blank q short" type="text"> <input class="blank q" type="text"> to <input class="blank q short" type="text"> one?</span>
+      </div>
+
+      <div class="turn">
+        <span class="who">M:</span>
+        <span class="say">They <input class="blank q tiny" type="text"> cost a <input class="blank q short" type="text"> of <input class="blank q" type="text">. But I <input class="blank q" type="text"> <input class="blank q" type="text"> watching TV. I <input class="blank q short" type="text"> it's much <input class="blank q" type="text"> <input class="blank q short" type="text"> to <input class="blank q short" type="text"> TV shows <input class="blank q tiny" type="text"> a big <input class="blank q" type="text">.</span>
+      </div>
+
+      <div class="turn">
+        <span class="who">W:</span>
+        <span class="say">I've <input class="blank q short" type="text"> <input class="blank q" type="text"> TV on a <input class="blank q short" type="text"> <input class="blank q short" type="text">. Do <input class="blank q short" type="text"> think <input class="blank q short" type="text"> <input class="blank q" type="text"> of the <input class="blank q short" type="text"> is <input class="blank q short" type="text">?</span>
+      </div>
+
+      <div class="turn">
+        <span class="who">M:</span>
+        <span class="say">Yes, the <input class="blank q" type="text"> is <input class="blank q short" type="text">. When you <input class="blank q short" type="text"> soccer games, <input class="blank q short" type="text"> <input class="blank q" type="text"> like you <input class="blank q short" type="text"> right <input class="blank q short" type="text"> on <input class="blank q short" type="text"> field!</span>
+      </div>
+
+      <div class="turn">
+        <span class="who">W:</span>
+        <span class="say">When <input class="blank q short" type="text"> <input class="blank q short" type="text"> the TV, <input class="blank q short" type="text"> I <input class="blank q" type="text"> over to your <input class="blank q short" type="text">? Then, I <input class="blank q short" type="text"> <input class="blank q" type="text"> watching TV on <input class="blank q tiny" type="text"> <input class="blank q short" type="text"> <input class="blank q short" type="text"> with you!</span>
+      </div>
+
+      <div class="turn">
+        <span class="who">M:</span>
+        <span class="say">I have <input class="blank q tiny" type="text"> <input class="blank q" type="text"> some <input class="blank q" type="text"> to <input class="blank q short" type="text"> the TV <input class="blank q short" type="text">. It will <input class="blank q tiny" type="text"> a few <input class="blank q short" type="text"> <input class="blank q" type="text"> I can <input class="blank q short" type="text"> to <input class="blank q tiny" type="text"> it!</span>
+      </div>
+    </div>
+  </section>
+
+  <footer>IELTS with Chou · Unit 17 — A Big Screen TV</footer>
+</div>
+
+<script>
+  (function(){
+    var textInputs = Array.prototype.slice.call(document.querySelectorAll('.q'));
+    var groups = Array.prototype.slice.call(document.querySelectorAll('.qgroup'));
+    var total = textInputs.length + groups.length;
+
+    var countEl = document.getElementById('count');
+    var totalEl = document.getElementById('total');
+    var pctEl   = document.getElementById('pct');
+    var fillEl  = document.getElementById('fill');
+    totalEl.textContent = total;
+
+    function update(){
+      var done = 0;
+      textInputs.forEach(function(el){
+        var filled = el.value.trim() !== '';
+        if(filled) done++;
+        el.classList.toggle('filled', filled);
+      });
+      groups.forEach(function(g){
+        var checked = g.querySelector('input[type=radio]:checked');
+        if(checked) done++;
+        g.querySelectorAll('.opt').forEach(function(o){
+          o.classList.toggle('checked', o.querySelector('input').checked);
+        });
+      });
+      countEl.textContent = done;
+      var pct = total ? Math.round(done/total*100) : 0;
+      pctEl.textContent = pct + '%';
+      fillEl.style.width = pct + '%';
+    }
+
+    textInputs.forEach(function(el){ el.addEventListener('input', update); });
+    groups.forEach(function(g){
+      g.addEventListener('change', update);
+    });
+
+    document.getElementById('reset').addEventListener('click', function(){
+      textInputs.forEach(function(el){ el.value=''; });
+      document.querySelectorAll('input[type=radio]').forEach(function(r){ r.checked=false; });
+      update();
+    });
+
+    update();
+  })();
+</script>
+</body>
+</html>
