@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unit 2 — A Hiking Trip</title>
+<style>
+  :root{
+    --ink:#17251d;--ink-soft:#4c5a51;--paper:#f0f4f0;--card:#ffffff;--line:#d6e0d8;
+    --green:#2f8f4e;--green-deep:#1f6b3a;--green-soft:#e4f2e7;
+    --correct:#2e7d32;--correct-bg:#e6f4e8;--wrong:#c62828;--wrong-bg:#fbeaea;
+    --shadow:0 1px 2px rgba(23,37,29,.06),0 8px 24px rgba(23,37,29,.07);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0;background:var(--paper);color:var(--ink);
+    font-family:Georgia,"Times New Roman",serif;font-size:17px;line-height:1.6;-webkit-text-size-adjust:100%;}
+  .wrap{max-width:840px;margin:0 auto;padding:0 18px 80px;}
+
+  header.masthead{max-width:840px;margin:0 auto;padding:34px 18px 8px;}
+  .unit-tag{display:inline-block;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#fff;
+    background:var(--green);padding:5px 12px;border-radius:4px;}
+  h1.title{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-weight:800;
+    font-size:34px;line-height:1.1;letter-spacing:-.01em;margin:12px 0 4px;}
+  .subtitle{color:var(--ink-soft);font-style:italic;margin:0;}
+
+  .player{max-width:840px;margin:16px auto 0;padding:0 18px;}
+  .player-card{background:linear-gradient(135deg,#1f6b3a,#2f8f4e);border-radius:14px;padding:14px 16px;
+    color:#fff;box-shadow:var(--shadow);}
+  .player-head{display:flex;align-items:center;gap:10px;margin-bottom:10px;font-family:system-ui,sans-serif;}
+  .player-head .ico{width:34px;height:34px;border-radius:50%;flex:none;background:rgba(255,255,255,.16);
+    display:flex;align-items:center;justify-content:center;}
+  .player-head .ico svg{width:19px;height:19px;fill:#fff;}
+  .player-head .t{font-weight:800;font-size:16px;}
+  .player-head .s{font-size:12px;opacity:.82;}
+  .player-head .badge{margin-left:auto;font-size:11px;font-weight:700;letter-spacing:.05em;
+    background:rgba(255,255,255,.18);padding:4px 11px;border-radius:20px;}
+  .frame{background:#0e1a12;border-radius:10px;overflow:hidden;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);}
+  .frame iframe{display:block;width:100%;height:74px;border:0;}
+
+  .tracker{position:sticky;top:0;z-index:20;background:var(--paper);padding:12px 18px;margin-top:16px;
+    border-bottom:1px solid var(--line);}
+  .tracker-inner{max-width:804px;margin:0 auto;display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+  .readout{background:#0e1a12;color:#8be3a5;font-family:"SFMono-Regular",ui-monospace,Menlo,Consolas,monospace;
+    border-radius:8px;padding:8px 13px;display:flex;align-items:baseline;gap:7px;white-space:nowrap;
+    box-shadow:inset 0 0 0 1px rgba(139,227,165,.22),inset 0 0 20px rgba(139,227,165,.10);
+    text-shadow:0 0 8px rgba(139,227,165,.4);}
+  .readout .label{font-size:10px;letter-spacing:.2em;opacity:.7;text-transform:uppercase;}
+  .readout .num{font-size:20px;font-weight:700;}
+  .readout .of{opacity:.55;font-size:14px;}
+  .readout.score{color:#ffd479;box-shadow:inset 0 0 0 1px rgba(255,212,121,.24),inset 0 0 20px rgba(255,212,121,.10);
+    text-shadow:0 0 8px rgba(255,212,121,.4);display:none;}
+  .readout.score.show{display:flex;}
+  .spacer{flex:1;min-width:8px;}
+  .btn{font-family:system-ui,sans-serif;font-size:14px;font-weight:700;cursor:pointer;border-radius:8px;
+    padding:9px 16px;border:1px solid var(--line);}
+  .btn.check{background:var(--green);color:#fff;border-color:var(--green);}
+  .btn.check:hover{background:var(--green-deep);}
+  .btn.reset{background:#fff;color:var(--ink-soft);}
+  .btn.reset:hover{border-color:var(--green);color:var(--green);}
+
+  section.block{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:22px 24px;
+    margin-top:20px;box-shadow:var(--shadow);}
+  .block-head{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;display:flex;align-items:center;
+    gap:11px;margin:0 0 4px;}
+  .letter{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;
+    background:var(--green);color:#fff;font-weight:800;font-size:16px;flex:none;}
+  .block-head h2{font-size:21px;font-weight:800;margin:0;letter-spacing:-.01em;}
+  .track{font-family:system-ui,sans-serif;font-size:11px;font-weight:700;letter-spacing:.05em;
+    color:var(--green-deep);background:var(--green-soft);border-radius:20px;padding:3px 10px;margin-left:auto;white-space:nowrap;}
+  .instruction{font-family:system-ui,sans-serif;font-weight:700;font-size:14.5px;color:var(--ink);margin:4px 0 16px;}
+
+  .wordbox{display:flex;flex-wrap:wrap;gap:8px;background:var(--green-soft);border:1px dashed #9fce9f;
+    border-radius:10px;padding:12px 14px;margin:0 0 18px;}
+  .wordbox .wb-label{width:100%;font-family:system-ui,sans-serif;font-size:11px;font-weight:700;
+    letter-spacing:.14em;text-transform:uppercase;color:var(--green-deep);margin-bottom:2px;}
+  .chip{background:#fff;border:1px solid #a9d6a9;border-radius:6px;padding:4px 12px;font-family:system-ui,sans-serif;
+    font-size:14px;color:var(--green-deep);}
+
+  ol.qlist{margin:0;padding-left:26px;}
+  ol.qlist>li{margin:0 0 12px;padding-left:4px;}
+  ol.qlist>li::marker{font-weight:700;color:var(--ink-soft);}
+
+  .field{position:relative;display:inline-block;}
+  input.blank{font-family:Georgia,serif;font-size:16px;color:var(--green-deep);border:none;
+    border-bottom:2px solid #b4c2b8;background:transparent;padding:1px 4px;margin:0 2px;min-width:70px;width:140px;
+    text-align:center;transition:border-color .15s;}
+  input.blank:focus{outline:none;border-bottom-color:var(--green);}
+  input.blank.filled{border-bottom-color:var(--green);font-weight:600;}
+  input.short{width:86px;min-width:54px;}
+  input.tiny{width:56px;min-width:42px;}
+  input.long{width:190px;}
+  input.blank.correct{border-bottom-color:var(--correct);color:var(--correct);background:var(--correct-bg);border-radius:4px 4px 0 0;font-weight:600;}
+  input.blank.incorrect{border-bottom-color:var(--wrong);color:var(--wrong);background:var(--wrong-bg);border-radius:4px 4px 0 0;font-weight:600;}
+  .field.correct input.blank{border-bottom-color:var(--correct);color:var(--correct);background:var(--correct-bg);border-radius:4px 4px 0 0;}
+  .field.incorrect input.blank{border-bottom-color:var(--wrong);color:var(--wrong);background:var(--wrong-bg);border-radius:4px 4px 0 0;}
+  .field.correct::after{content:"✓";position:absolute;right:-14px;top:50%;transform:translateY(-50%);color:var(--correct);font-weight:700;font-family:system-ui,sans-serif;font-size:13px;}
+  .field.incorrect::after{content:"✗";position:absolute;right:-14px;top:50%;transform:translateY(-50%);color:var(--wrong);font-weight:700;font-family:system-ui,sans-serif;font-size:13px;}
+
+  .mcq{list-style:none;margin:8px 0 0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .opt{display:flex;align-items:flex-start;gap:9px;cursor:pointer;border:1px solid var(--line);border-radius:9px;
+    padding:9px 12px;transition:border-color .15s,background .15s;}
+  .opt:hover{border-color:#bcd0c1;background:#fafcfa;}
+  .opt input{margin:4px 0 0;accent-color:var(--green);flex:none;}
+  .opt .tag{font-weight:700;color:var(--ink-soft);}
+  .opt.checked{border-color:var(--green);background:var(--green-soft);}
+  .opt.checked .tag{color:var(--green-deep);}
+  .qgroup.graded-correct .opt.checked{border-color:var(--correct);background:var(--correct-bg);}
+  .qgroup.graded-correct .opt.checked .tag{color:var(--correct);}
+  .qgroup.graded-wrong .opt.checked{border-color:var(--wrong);background:var(--wrong-bg);}
+  .qgroup.graded-wrong .opt.checked .tag{color:var(--wrong);}
+
+  .tf li{display:flex;align-items:center;gap:12px;margin:0 0 10px;border-bottom:1px dotted var(--line);padding-bottom:8px;}
+  .tf-field{position:relative;flex:none;}
+  input.tf{font-family:system-ui,sans-serif;font-weight:800;font-size:16px;width:48px;height:40px;text-align:center;
+    text-transform:uppercase;color:var(--green-deep);border:1px solid var(--line);border-radius:8px;background:#fbfdfb;}
+  input.tf:focus{outline:none;border-color:var(--green);}
+  input.tf.filled{border-color:var(--green);}
+  .tf-field.correct input.tf{border-color:var(--correct);color:var(--correct);background:var(--correct-bg);}
+  .tf-field.incorrect input.tf{border-color:var(--wrong);color:var(--wrong);background:var(--wrong-bg);}
+  .tf-field.correct::after{content:"✓";position:absolute;right:-16px;top:50%;transform:translateY(-50%);color:var(--correct);font-weight:700;font-family:system-ui,sans-serif;font-size:13px;}
+  .tf-field.incorrect::after{content:"✗";position:absolute;right:-16px;top:50%;transform:translateY(-50%);color:var(--wrong);font-weight:700;font-family:system-ui,sans-serif;font-size:13px;}
+
+  .dialog{background:#fbfcf9;border:1px solid #e4ebdf;border-radius:10px;padding:18px 20px;}
+  .turn{display:flex;gap:12px;margin:0 0 16px;line-height:2.2;}
+  .turn:last-child{margin-bottom:0;}
+  .who{font-family:system-ui,sans-serif;font-weight:800;color:var(--green);flex:none;width:26px;padding-top:1px;}
+  .say{flex:1;}
+  .hint{font-family:system-ui,sans-serif;font-size:13px;color:var(--ink-soft);background:#eef4ee;
+    border-left:3px solid var(--green);border-radius:0 8px 8px 0;padding:9px 13px;margin:0 0 16px;}
+
+  footer{text-align:center;font-family:system-ui,sans-serif;font-size:13px;color:var(--ink-soft);margin-top:34px;}
+
+  @media (max-width:560px){
+    body{font-size:16px;}
+    section.block{padding:18px 15px;}
+    .mcq{grid-template-columns:1fr;}
+    input.blank{width:110px;}
+  }
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <span class="unit-tag">Unit 2</span>
+  <h1 class="title">A Hiking Trip</h1>
+  <p class="subtitle">Listening &amp; Dictation worksheet</p>
+</header>
+
+<div class="player">
+  <div class="player-card">
+    <div class="player-head">
+      <span class="ico">
+        <svg viewBox="0 0 24 24"><path d="M12 3a7 7 0 0 0-7 7v4a3 3 0 0 0 3 3h1v-6H7v-1a5 5 0 0 1 10 0v1h-2v6h1a3 3 0 0 0 3-3v-4a7 7 0 0 0-7-7z"/></svg>
+      </span>
+      <div>
+        <div class="t">Track 2 — Audio</div>
+        <div class="s">Press play, then listen and complete the tasks below.</div>
+      </div>
+      <span class="badge">🎧 Listening</span>
+    </div>
+    <div class="frame">
+      <iframe src="https://drive.google.com/file/d/1jHWJVytnmL2RI0eCfhgTTDkvk1grG3VW/preview" allow="autoplay" title="Unit 2 A Hiking Trip audio"></iframe>
+    </div>
+  </div>
+</div>
+
+<div class="tracker">
+  <div class="tracker-inner">
+    <div class="readout">
+      <span class="label">Attempted</span>
+      <span class="num" id="count">0</span>
+      <span class="of">/ <span id="total">0</span></span>
+    </div>
+    <div class="readout score" id="scoreBox">
+      <span class="label">Correct</span>
+      <span class="num" id="score">0</span>
+      <span class="of">/ <span id="gradedTotal">0</span></span>
+    </div>
+    <div class="spacer"></div>
+    <button class="btn check" id="check" type="button">Check answers</button>
+    <button class="btn reset" id="reset" type="button">Reset</button>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- A -->
+  <section class="block">
+    <div class="block-head"><span class="letter">A</span><h2>New Words</h2></div>
+    <p class="instruction">Fill in the blanks.</p>
+    <div class="wordbox">
+      <span class="wb-label">Word box</span>
+      <span class="chip">trip</span>
+      <span class="chip">cabin</span>
+      <span class="chip">sign up</span>
+      <span class="chip">activity</span>
+      <span class="chip">hike</span>
+      <span class="chip">club</span>
+    </div>
+    <ol class="qlist">
+      <li>Painting is an <span class="field"><input class="blank q" data-key="a1" type="text"></span> that most children love.</li>
+      <li>You must <span class="field"><input class="blank q" data-key="a2" type="text"></span> as a member to receive club announcements by email.</li>
+      <li>Sally is going on a <span class="field"><input class="blank q" data-key="a3" type="text"></span> to Europe.</li>
+      <li>My sister loves to draw. She is the president of the drawing <span class="field"><input class="blank q" data-key="a4" type="text"></span>.</li>
+      <li>The couple rented a <span class="field"><input class="blank q" data-key="a5" type="text"></span> in the woods for their honeymoon.</li>
+      <li>They want to <span class="field"><input class="blank q" data-key="a6" type="text"></span> along the river because there is a good trail there.</li>
+    </ol>
+  </section>
+
+  <!-- B -->
+  <section class="block">
+    <div class="block-head"><span class="letter">B</span><h2>Understanding the Context</h2><span class="track">Track 2</span></div>
+    <p class="instruction">Listen and answer the questions.</p>
+    <ol class="qlist">
+      <li>What will Anne do on Saturday?
+        <ul class="mcq qgroup" data-key="b1">
+          <li><label class="opt"><input type="radio" name="b1" value="a"><span class="tag">(a)</span><span>Go hiking near a river</span></label></li>
+          <li><label class="opt"><input type="radio" name="b1" value="b"><span class="tag">(b)</span><span>Hike up Bear Mountain</span></label></li>
+          <li><label class="opt"><input type="radio" name="b1" value="c"><span class="tag">(c)</span><span>Sign up for the trip</span></label></li>
+          <li><label class="opt"><input type="radio" name="b1" value="d"><span class="tag">(d)</span><span>Join the hiking club</span></label></li>
+        </ul>
+      </li>
+      <li>What is the hiking club NOT planning to do?
+        <ul class="mcq qgroup" data-key="b2">
+          <li><label class="opt"><input type="radio" name="b2" value="a"><span class="tag">(a)</span><span>Take pictures</span></label></li>
+          <li><label class="opt"><input type="radio" name="b2" value="b"><span class="tag">(b)</span><span>Go swimming</span></label></li>
+          <li><label class="opt"><input type="radio" name="b2" value="c"><span class="tag">(c)</span><span>Go skiing</span></label></li>
+          <li><label class="opt"><input type="radio" name="b2" value="d"><span class="tag">(d)</span><span>Make a campfire</span></label></li>
+        </ul>
+      </li>
+    </ol>
+  </section>
+
+  <!-- C -->
+  <section class="block">
+    <div class="block-head"><span class="letter">C</span><h2>Focus on Details</h2><span class="track">Track 2</span></div>
+    <p class="instruction">Listen and write the missing words.</p>
+    <ol class="qlist">
+      <li>Did you <span class="field"><input class="blank q short" data-key="c1" type="text"></span> for the trip on Saturday?</li>
+      <li>I didn't know there was a <span class="field"><input class="blank q short" data-key="c2" type="text"></span> on Saturday.</li>
+      <li>Well, it takes seven hours to hike to the <span class="field"><input class="blank q short" data-key="c3" type="text"></span>, so it will be late by the time we arrive.</li>
+      <li>The following day we'll leave at dawn and <span class="field"><input class="blank q short" data-key="c4" type="text"></span> to the top of the mountain.</li>
+    </ol>
+  </section>
+
+  <!-- D -->
+  <section class="block">
+    <div class="block-head"><span class="letter">D</span><h2>True or False</h2><span class="track">Track 2</span></div>
+    <p class="instruction">Listen and mark the sentences as T (True) or F (False).</p>
+    <ul class="tf" style="list-style:none;padding:0;margin:0;">
+      <li><span class="tf-field"><input class="tf q" data-key="d1" type="text" maxlength="1"></span><span>Anne wants to go hiking.</span></li>
+      <li><span class="tf-field"><input class="tf q" data-key="d2" type="text" maxlength="1"></span><span>They will hike up Bear Mountain.</span></li>
+      <li><span class="tf-field"><input class="tf q" data-key="d3" type="text" maxlength="1"></span><span>The friends are not members of the hiking club.</span></li>
+      <li><span class="tf-field"><input class="tf q" data-key="d4" type="text" maxlength="1"></span><span>Jennifer will not let Anne sign up for the trip.</span></li>
+      <li><span class="tf-field"><input class="tf q" data-key="d5" type="text" maxlength="1"></span><span>The hikers will spend the night in the cabin.</span></li>
+    </ul>
+  </section>
+
+  <!-- E -->
+  <section class="block">
+    <div class="block-head"><span class="letter">E</span><h2>Dictation</h2><span class="track">Track 2</span></div>
+    <p class="instruction">Listen and complete the dialog.</p>
+    <div class="hint">Listen to Track 2 and type one word in every blank. Spelling and capitalisation don't affect the score.</div>
+
+    <div class="dialog">
+      <div class="turn"><span class="who">M:</span><span class="say"><input class="blank e tiny" type="text">, Anne! <input class="blank e short" type="text"> <input class="blank e short" type="text"> <input class="blank e short" type="text"> <input class="blank e tiny" type="text"> <input class="blank e short" type="text"> <input class="blank e tiny" type="text"> trip <input class="blank e tiny" type="text"> Saturday?</span></div>
+
+      <div class="turn"><span class="who">W:</span><span class="say">What <input class="blank e short" type="text"> <input class="blank e tiny" type="text"> <input class="blank e short" type="text">? <input class="blank e tiny" type="text"> <input class="blank e short" type="text"> <input class="blank e short" type="text"> there <input class="blank e short" type="text"> <input class="blank e tiny" type="text"> <input class="blank e short" type="text"> <input class="blank e tiny" type="text"> Saturday.</span></div>
+
+      <div class="turn"><span class="who">M:</span><span class="say">The <input class="blank e short" type="text"> <input class="blank e short" type="text"> <input class="blank e tiny" type="text"> going <input class="blank e tiny" type="text"> Bear Mountain. <input class="blank e tiny" type="text"> <input class="blank e short" type="text"> drops <input class="blank e tiny" type="text"> <input class="blank e tiny" type="text"> at <input class="blank e tiny" type="text"> <input class="blank e short" type="text">, <input class="blank e short" type="text"> we're <input class="blank e short" type="text"> <input class="blank e tiny" type="text"> <input class="blank e short" type="text"> until <input class="blank e tiny" type="text"> <input class="blank e tiny" type="text"> to <input class="blank e tiny" type="text"> <input class="blank e short" type="text"> <input class="blank e short" type="text"> up <input class="blank e tiny" type="text"> <input class="blank e short" type="text">.</span></div>
+
+      <div class="turn"><span class="who">W:</span><span class="say">That <input class="blank e short" type="text"> <input class="blank e short" type="text"> <input class="blank e short" type="text">! Where <input class="blank e tiny" type="text"> <input class="blank e tiny" type="text"> <input class="blank e short" type="text"> up?</span></div>
+
+      <div class="turn"><span class="who">M:</span><span class="say"><input class="blank e tiny" type="text"> <input class="blank e short" type="text"> <input class="blank e short" type="text"> Jennifer. She'll <input class="blank e short" type="text"> you <input class="blank e short" type="text"> <input class="blank e tiny" type="text">.</span></div>
+
+      <div class="turn"><span class="who">W:</span><span class="say">What <input class="blank e short" type="text"> <input class="blank e short" type="text"> <input class="blank e tiny" type="text"> do <input class="blank e short" type="text"> <input class="blank e tiny" type="text"> <input class="blank e tiny" type="text"> <input class="blank e tiny" type="text"> the <input class="blank e short" type="text"> on <input class="blank e tiny" type="text"> <input class="blank e short" type="text">?</span></div>
+
+      <div class="turn"><span class="who">M:</span><span class="say">Well, <input class="blank e tiny" type="text"> <input class="blank e short" type="text"> <input class="blank e short" type="text"> <input class="blank e short" type="text"> to <input class="blank e short" type="text"> <input class="blank e tiny" type="text"> <input class="blank e tiny" type="text"> <input class="blank e short" type="text">, so <input class="blank e tiny" type="text"> <input class="blank e short" type="text"> <input class="blank e tiny" type="text"> late <input class="blank e tiny" type="text"> <input class="blank e tiny" type="text"> <input class="blank e short" type="text"> we <input class="blank e short" type="text">. <input class="blank e short" type="text"> <input class="blank e tiny" type="text"> unpack, we'll <input class="blank e short" type="text"> <input class="blank e tiny" type="text"> campfire. Then <input class="blank e tiny" type="text"> <input class="blank e tiny" type="text"> <input class="blank e short" type="text">, <input class="blank e tiny" type="text">, <input class="blank e tiny" type="text"> <input class="blank e short" type="text"> stories <input class="blank e short" type="text"> the <input class="blank e short" type="text">. The following <input class="blank e tiny" type="text"> we'll <input class="blank e short" type="text"> <input class="blank e tiny" type="text"> <input class="blank e short" type="text"> and <input class="blank e short" type="text"> <input class="blank e tiny" type="text"> <input class="blank e tiny" type="text"> top <input class="blank e tiny" type="text"> <input class="blank e tiny" type="text"> <input class="blank e short" type="text">. After <input class="blank e tiny" type="text"> <input class="blank e short" type="text"> <input class="blank e short" type="text">, we'll <input class="blank e short" type="text"> <input class="blank e short" type="text"> <input class="blank e short" type="text">. If we <input class="blank e short" type="text"> <input class="blank e short" type="text">, we <input class="blank e short" type="text"> <input class="blank e tiny" type="text"> <input class="blank e short" type="text"> in <input class="blank e tiny" type="text"> <input class="blank e short" type="text"> on <input class="blank e tiny" type="text"> <input class="blank e short" type="text">!</span></div>
+
+      <div class="turn"><span class="who">W:</span><span class="say">Those <input class="blank e short" type="text"> <input class="blank e short" type="text"> really <input class="blank e tiny" type="text"> <input class="blank e short" type="text">, and <input class="blank e tiny" type="text"> can't <input class="blank e short" type="text"> <input class="blank e tiny" type="text"> <input class="blank e tiny" type="text">!</span></div>
+    </div>
+  </section>
+
+  <footer>IELTS with Chou · Unit 2 — A Hiking Trip</footer>
+</div>
+
+<script>
+  (function(){
+    var K = {
+      a1:"YWN0aXZpdHk=", a2:"c2lnbiB1cA==", a3:"dHJpcA==", a4:"Y2x1Yg==", a5:"Y2FiaW4=", a6:"aGlrZQ==",
+      b1:"Yg==", b2:"Yw==",
+      c1:"c2lnbiB1cA==", c2:"dHJpcA==", c3:"Y2FiaW4=", c4:"aGlrZQ==",
+      d1:"VA==", d2:"VA==", d3:"Rg==", d4:"Rg==", d5:"VA=="
+    };
+    function ans(k){ return atob(K[k]); }
+
+    var E_BLOB = "WyJIaSIsICJEaWQiLCAieW91IiwgInNpZ24iLCAidXAiLCAiZm9yIiwgInRoZSIsICJvbiIsICJ0cmlwIiwgImlzIiwgInRoYXQiLCAiSSIsICJkaWRuJ3QiLCAia25vdyIsICJ3YXMiLCAiYSIsICJ0cmlwIiwgIm9uIiwgImhpa2luZyIsICJjbHViIiwgImlzIiwgInRvIiwgIlRoZSIsICJidXMiLCAidXMiLCAib2ZmIiwgInRoZSIsICJib3R0b20iLCAiYW5kIiwgImdvaW5nIiwgInRvIiwgImhpa2UiLCAid2UiLCAiZ2V0IiwgImEiLCAiY2FiaW4iLCAiaGFsZndheSIsICJ0aGUiLCAibW91bnRhaW4iLCAic291bmRzIiwgInJlYWxseSIsICJncmVhdCIsICJjYW4iLCAiSSIsICJzaWduIiwgIkdvIiwgImFuZCIsICJzZWUiLCAiaGVscCIsICJzaWduIiwgInVwIiwgImFjdGl2aXR5IiwgIndpbGwiLCAid2UiLCAid2hlbiIsICJ3ZSIsICJnZXQiLCAidG8iLCAiY2FiaW4iLCAidGhlIiwgIm1vdW50YWluIiwgIml0IiwgInRha2VzIiwgInNldmVuIiwgImhvdXJzIiwgImhpa2UiLCAidG8iLCAidGhlIiwgImNhYmluIiwgIml0IiwgIndpbGwiLCAiYmUiLCAiYnkiLCAidGhlIiwgInRpbWUiLCAiYXJyaXZlIiwgIkFmdGVyIiwgIndlIiwgInN0YXJ0IiwgImEiLCAid2UiLCAiY2FuIiwgInNpbmciLCAiZWF0IiwgImFuZCIsICJ0ZWxsIiwgImFyb3VuZCIsICJmaXJlIiwgImRheSIsICJsZWF2ZSIsICJhdCIsICJkYXduIiwgImhpa2UiLCAidG8iLCAidGhlIiwgIm9mIiwgInRoZSIsICJtb3VudGFpbiIsICJ3ZSIsICJ0YWtlIiwgInBpY3R1cmVzIiwgImhpa2UiLCAiYmFjayIsICJkb3duIiwgImhhdmUiLCAidGltZSIsICJtaWdodCIsICJnbyIsICJzd2ltbWluZyIsICJ0aGUiLCAibGFrZSIsICJ0aGUiLCAibW91bnRhaW4iLCAic291bmQiLCAibGlrZSIsICJmdW4iLCAiYWN0aXZpdGllcyIsICJJIiwgIndhaXQiLCAidG8iLCAiZ28iXQ==";
+    var E_ANS = JSON.parse(atob(E_BLOB));
+    var eInputs = Array.prototype.slice.call(document.querySelectorAll('input.e'));
+
+    var allInputs = Array.prototype.slice.call(document.querySelectorAll('input.q, input.e'));
+    var radios    = Array.prototype.slice.call(document.querySelectorAll('.qgroup'));
+    var total = allInputs.length + radios.length;
+    var textGraded = document.querySelectorAll('input[data-key]').length; // A, C, D text fields
+    var gradedTotal = textGraded + radios.length + eInputs.length;
+
+    var countEl = document.getElementById('count');
+    var totalEl = document.getElementById('total');
+    var scoreBox = document.getElementById('scoreBox');
+    var scoreEl = document.getElementById('score');
+    document.getElementById('gradedTotal').textContent = gradedTotal;
+    totalEl.textContent = total;
+
+    // lenient normalisation: lowercase, trim, collapse spaces, drop apostrophes
+    function norm(s){ return (s||'').trim().toLowerCase().replace(/[’']/g,'').replace(/\s+/g,' '); }
+
+    function updateAttempted(){
+      var done = 0;
+      allInputs.forEach(function(el){
+        var f = el.value.trim() !== '';
+        if(f) done++;
+        el.classList.toggle('filled', f);
+      });
+      radios.forEach(function(g){
+        var picked = g.querySelector('input[type=radio]:checked');
+        if(picked) done++;
+        g.querySelectorAll('.opt').forEach(function(o){ o.classList.toggle('checked', o.querySelector('input').checked); });
+      });
+      countEl.textContent = done;
+    }
+
+    function clearMarks(){
+      document.querySelectorAll('.field, .tf-field').forEach(function(f){ f.classList.remove('correct','incorrect'); });
+      eInputs.forEach(function(el){ el.classList.remove('correct','incorrect'); });
+      radios.forEach(function(g){ g.classList.remove('graded-correct','graded-wrong'); });
+      scoreBox.classList.remove('show');
+    }
+
+    function checkAnswers(){
+      var correct = 0;
+      // A, C text + D true/false
+      document.querySelectorAll('input[data-key]').forEach(function(el){
+        var key = el.getAttribute('data-key');
+        var wrap = el.closest('.field') || el.closest('.tf-field');
+        if(!wrap) return;
+        var good;
+        if(key.charAt(0) === 'd'){
+          good = el.value.trim() !== '' && norm(el.value).charAt(0) === ans(key).toLowerCase().charAt(0);
+        } else {
+          good = el.value.trim() !== '' && norm(el.value) === norm(ans(key));
+        }
+        wrap.classList.remove('correct','incorrect');
+        wrap.classList.add(good ? 'correct' : 'incorrect');
+        if(good) correct++;
+      });
+      // B radios
+      radios.forEach(function(g){
+        var key = g.getAttribute('data-key');
+        var picked = g.querySelector('input[type=radio]:checked');
+        var good = picked && picked.value === ans(key);
+        g.classList.remove('graded-correct','graded-wrong');
+        g.classList.add(good ? 'graded-correct' : 'graded-wrong');
+        if(good) correct++;
+      });
+      // E dictation (by blank order)
+      eInputs.forEach(function(el, i){
+        var good = el.value.trim() !== '' && norm(el.value) === norm(E_ANS[i]);
+        el.classList.remove('correct','incorrect');
+        el.classList.add(good ? 'correct' : 'incorrect');
+        if(good) correct++;
+      });
+      scoreEl.textContent = correct;
+      scoreBox.classList.add('show');
+      scoreBox.scrollIntoView({behavior:'smooth', block:'nearest'});
+    }
+
+    allInputs.forEach(function(el){
+      el.addEventListener('input', function(){
+        var wrap = el.closest('.field') || el.closest('.tf-field');
+        if(wrap){ wrap.classList.remove('correct','incorrect'); }
+        el.classList.remove('correct','incorrect');
+        scoreBox.classList.remove('show');
+        updateAttempted();
+      });
+    });
+    radios.forEach(function(g){
+      g.addEventListener('change', function(){
+        g.classList.remove('graded-correct','graded-wrong');
+        scoreBox.classList.remove('show');
+        updateAttempted();
+      });
+    });
+
+    document.getElementById('check').addEventListener('click', checkAnswers);
+    document.getElementById('reset').addEventListener('click', function(){
+      allInputs.forEach(function(el){ el.value=''; });
+      document.querySelectorAll('input[type=radio]').forEach(function(r){ r.checked=false; });
+      clearMarks();
+      updateAttempted();
+    });
+
+    updateAttempted();
+  })();
+</script>
+</body>
+</html>
